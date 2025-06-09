@@ -536,9 +536,8 @@ int main() {
     // ------------------------------------------------------------------------------------------------------------------------
 
     // WINDOW FOR GAME SCREEN STARTS HERE: ------------------------------------------------------------------------------------
-
+    
     while (dinoScreen.isOpen()) {
-
         // Time since last frames
         float deltaTime = clock.restart().asSeconds();
         static float timeSinceLastFrame = 0.0f;
@@ -1428,6 +1427,7 @@ int main() {
         // dinoScreen.draw(ptBottom);
 
         for (auto &seg : theGround) {
+            // cout<<"ground here"<<endl;
             dinoScreen.draw(seg);
         }
 
@@ -1452,8 +1452,8 @@ int main() {
 
 
         // Displays the window
+        dinoScreen.display();
     }
-    dinoScreen.display();
 
     // cout << "this is the Distance: " << distance << endl;
     // cout << "this is the maxDistance: " << maxDistance << endl;

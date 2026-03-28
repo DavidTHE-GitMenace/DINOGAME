@@ -539,7 +539,7 @@ int main() {
     
     while (dinoScreen.isOpen()) {
         // Time since last frames
-        float deltaTime = clock.restart().asSeconds();
+        float deltaTime = clock.restart().asSeconds();        
         static float timeSinceLastFrame = 0.0f;
         static float timeSinceLastFrame2 = 0.0f;
         static float timeSinceLastFrame3 = 0.0f;
@@ -1439,7 +1439,9 @@ int main() {
         dinoScreen.draw(pt);
         dinoScreen.draw(gameOver);
         dinoScreen.draw(resetButton);
-        
+
+
+        // IM PRETTY SURE THIS IS THE PTERODACTYL HITBOX
         // dinoScreen.draw(pterodactylHead); 
         // dinoScreen.draw(pterodactylBody1); 
         // dinoScreen.draw(pterodactylBody2); 

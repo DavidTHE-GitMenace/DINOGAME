@@ -30,5 +30,6 @@ git push -u origin branch-name → upload it to GitHub
 git switch main → go back to main
 git pull origin main → update main
 git switch -c branch-name → make a new branch and enter it
+git branch / git status → see what branch you're on
 
 ANY OTHER DIRECTIONS:

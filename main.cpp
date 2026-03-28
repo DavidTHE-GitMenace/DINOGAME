@@ -244,19 +244,19 @@ int main() {
 
     // DINO SPRITE SHEET: -----------------------------------------------------------------------------------------------------
     Texture dinoFrameTexture;
-    if (!dinoFrameTexture.loadFromFile("gameSheet.png")) {
+    if (!dinoFrameTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/gameSheet.png")) {
         cerr << "Error: The image of the entire sprite sheet wasn't found for some reason." << endl;
         return -1;
     }
 
     Texture dinoDucking1;
-    if (!dinoDucking1.loadFromFile("DinoFolder/dinoDucking1.png")) {
+    if (!dinoDucking1.loadFromFile("ImageAndSpriteFolder/DinoFolder/dinoDucking1.png")) {
         cerr << "Error: The image of the first sprite of the dino ducking wasn't found for some reason." << endl;
         return -1;
     }
 
     Texture dinoDucking2;
-    if (!dinoDucking2.loadFromFile("DinoFolder/dinoDucking2.png")) {
+    if (!dinoDucking2.loadFromFile("ImageAndSpriteFolder/DinoFolder/dinoDucking2.png")) {
         cerr << "Error: The image of the second sprite of the dino ducking wasn't found for some reason." << endl;
         return -1;
     }
@@ -293,13 +293,13 @@ int main() {
 
     // PTERODACTYL SPRITE SHEET STARTS HERE: ----------------------------------------------------------------------------------
     Texture ptFlapDown;
-    if (!ptFlapDown.loadFromFile("PterodactylFolder/pterodactylFlapDown.png")) {
+    if (!ptFlapDown.loadFromFile("ImageAndSpriteFolder/PterodactylFolder/pterodactylFlapDown.png")) {
         cerr << "Error: The image of the cloud wasn't found for some reason." << endl;
         return -1;
     }
 
     Texture ptFlapUp;
-    if (!ptFlapUp.loadFromFile("PterodactylFolder/pterodactylFlapUp.png")) {
+    if (!ptFlapUp.loadFromFile("ImageAndSpriteFolder/PterodactylFolder/pterodactylFlapUp.png")) {
         cerr << "Error: The image of the cloud wasn't found for some reason." << endl;
         return -1;
     }
@@ -318,7 +318,7 @@ int main() {
 
     // BACKGROUND SPRITES ARE HEREEEEE: ---------------------------------------------------------------------------------------
     Texture cloudTexture;
-    if (!cloudTexture.loadFromFile("cloud.png")) {
+    if (!cloudTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/cloud.png")) {
         cerr << "Error: The image of the cloud wasn't found for some reason." << endl;
         return -1;
     }
@@ -335,7 +335,7 @@ int main() {
 
 
     Texture gameOverTexture;
-    if (!gameOverTexture.loadFromFile("gameOver.png")) {
+    if (!gameOverTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/gameOver.png")) {
         cerr << "Error: The image of the game over text wasn't found for some reason." << endl;
         return -1;
     }
@@ -347,7 +347,7 @@ int main() {
 
 
     Texture resetButtonTexture;
-    if (!resetButtonTexture.loadFromFile("resetButton.png")) {
+    if (!resetButtonTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/resetButton.png")) {
         cerr << "Error: The image of the game over text wasn't found for some reason." << endl;
         return -1;
     }
@@ -363,42 +363,42 @@ int main() {
 
     // Importing Single Cactus texture
     Texture singleCactusTexture;
-    if (!singleCactusTexture.loadFromFile("CactiFolder/OneCactus.jpg")) {
+    if (!singleCactusTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/OneCactus.jpg")) {
         cerr << "Error: The one cactus file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     // Importing Single Small Cactus texture
     Texture singleSmallCactusTexture;
-    if (!singleSmallCactusTexture.loadFromFile("CactiFolder/OneSmallCactus.png")) {
+    if (!singleSmallCactusTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/OneSmallCactus.png")) {
         cerr << "Error: The one SMALL cactus file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     // Importing Two Cacti texture
     Texture twoCactiTexture;
-    if (!twoCactiTexture.loadFromFile("CactiFolder/twoCacti.png")) {
+    if (!twoCactiTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/twoCacti.png")) {
         cerr << "Error: The two cacti file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     // Importing Two Small Cacti texture
     Texture twoSmallCactiTexture;
-    if (!twoSmallCactiTexture.loadFromFile("CactiFolder/twoSmallCacti.png")) {
+    if (!twoSmallCactiTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/twoSmallCacti.png")) {
         cerr << "Error: The two SMALL cacti file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     // Importing Three Small Cacti texture
     Texture threeSmallCactiTexture;
-    if (!threeSmallCactiTexture.loadFromFile("CactiFolder/threeSmallCacti.png")) {
+    if (!threeSmallCactiTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/threeSmallCacti.png")) {
         cerr << "Error: The three cacti file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     // Importing Four Cacti texture
     Texture fourCactiTexture;
-    if (!fourCactiTexture.loadFromFile("CactiFolder/fourCacti.png")) {
+    if (!fourCactiTexture.loadFromFile("ImageAndSpriteFolder/CactiFolder/fourCacti.png")) {
         cerr << "Error: The four cacti file wasn't found idk wha happend." << endl;
         return -1;
     }
@@ -480,31 +480,31 @@ int main() {
     // GROUND SPRITES ARE GONNA BE HERE: --------------------------------------------------------------------------------------
 
     Texture fullGroundTexture;
-    if (!fullGroundTexture.loadFromFile("GroundFolder/fullGround.png")) {
+    if (!fullGroundTexture.loadFromFile("ImageAndSpriteFolder/GroundFolder/fullGround.png")) {
         cerr << "Error: The full ground file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     Texture flatGroundTexture;
-    if (!flatGroundTexture.loadFromFile("GroundFolder/flatPartOfGround.png")) {
+    if (!flatGroundTexture.loadFromFile("ImageAndSpriteFolder/GroundFolder/flatPartOfGround.png")) {
         cerr << "Error: The flat ground file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     Texture singleBumpTexture;
-    if (!singleBumpTexture.loadFromFile("GroundFolder/singleBump.png")) {
+    if (!singleBumpTexture.loadFromFile("ImageAndSpriteFolder/GroundFolder/singleBump.png")) {
         cerr << "Error: The single bump file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     Texture bumpyGroundTexture;
-    if (!bumpyGroundTexture.loadFromFile("GroundFolder/bumpyPartsOfGround.png")) {
+    if (!bumpyGroundTexture.loadFromFile("ImageAndSpriteFolder/GroundFolder/bumpyPartsOfGround.png")) {
         cerr << "Error: The bumpy ground file wasn't found idk wha happend." << endl;
         return -1;
     }
 
     Texture bumpAndDivotTexture;
-    if (!bumpAndDivotTexture.loadFromFile("GroundFolder/bumpAndDivot.png")) {
+    if (!bumpAndDivotTexture.loadFromFile("ImageAndSpriteFolder/GroundFolder/bumpAndDivot.png")) {
         cerr << "Error: The bump and divot file wasn't found idk wha happend." << endl;
         return -1;
     }

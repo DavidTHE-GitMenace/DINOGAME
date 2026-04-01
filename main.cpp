@@ -2,15 +2,43 @@
 using namespace std;
 #include <SFML/Graphics.hpp> // This is the graphics software used for the 2D game
 #include <SFML/Audio.hpp> // Audio inclusion
+#include <SFML/Network.hpp>
 using namespace sf;
 #include <random>
 #include <chrono>
 #include <cstddef>
 #include <string>
 
+// API Stuff
+bool tryRegister(const std::string& username, const std::string& password, std::string& serverMessage)
+{
+    sf::Http http("http://127.0.0.1", 5000);
+
+    sf::Http::Request request;
+    request.setMethod(sf::Http::Request::Post);
+    request.setUri("/register");
+    request.setField("Content-Type", "application/json");
+
+    std::string body =
+        "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+
+    request.setBody(body);
+
+    sf::Http::Response response = http.sendRequest(request);
+
+    std::cout << "STATUS: " << response.getStatus() << '\n';
+    std::cout << "BODY: " << response.getBody() << '\n';
+
+    serverMessage = response.getBody();
+
+    // Your register route probably returns 201 on success
+    return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+}
+
 int main() {
     // Creating a Window
     RenderWindow dinoScreen(VideoMode(1600, 900), "Dino Window");
+    dinoScreen.setKeyRepeatEnabled(false);
 
     // Colors that I need to custom make
     const Color red(255, 0, 0);
@@ -18,10 +46,75 @@ int main() {
     const Color green(0, 255, 0);
     const Color purple(0, 255, 255);
     const Color lightGray(100, 100, 100);
+    const Color midGray(60, 60, 60);    
     const Color gray(30, 30, 30);
 
     // Dark grey with 50% transparency (solid is 255, transparent is 0)
     sf::Color semiTransparentDarkGrey(90, 90, 90, 128);
+
+
+    // TEXTBOXES FOR LOGIN AND SIGNUP: --------------
+    Font pressStart;
+    if (!pressStart.loadFromFile("gameTextFont/PressStart2P-Regular.ttf")) {
+        cerr << "Failed to load font\n";
+    }
+
+    Text signUpText;
+    signUpText.setFont(pressStart);                  // which font to use
+    signUpText.setCharacterSize(55);                // in pixels
+    signUpText.setFillColor(lightGray);              // text color
+    signUpText.setPosition(600.f, 50.f);            // screen position
+    string signUp = "SIGN UP";
+    signUpText.setString(signUp);
+
+    Text loginText;
+    loginText.setFont(pressStart);                  // which font to use
+    loginText.setCharacterSize(55);                 // in pixels
+    loginText.setFillColor(lightGray);              // text color
+    loginText.setPosition(620.f, 400.f);            // screen position
+    string login = "LOG IN";
+    loginText.setString(login);
+
+    Text usernameText;
+    usernameText.setFont(pressStart);
+    usernameText.setCharacterSize(30);
+    usernameText.setFillColor(lightGray);
+    usernameText.setPosition(605.f, 150.f);
+
+    Text passwordText;
+    passwordText.setFont(pressStart);
+    passwordText.setCharacterSize(30);
+    passwordText.setFillColor(lightGray);
+    passwordText.setPosition(605.f, 222.f);
+
+    RectangleShape textBox1;
+    textBox1.setSize(Vector2f(380.f, 50.f));
+    textBox1.setFillColor(Color::White);
+    textBox1.setPosition(600.f, 140.f);
+
+    RectangleShape textBox1Outline;
+    textBox1Outline.setSize(Vector2f(400.f, 60.f));
+    textBox1Outline.setFillColor(midGray);
+    textBox1Outline.setPosition(590.f, 135.f);
+
+    RectangleShape textBox2;
+    textBox2.setSize(Vector2f(380.f, 50.f));
+    textBox2.setFillColor(Color::White);
+    textBox2.setPosition(600.f, 215.f);
+
+    RectangleShape textBox2Outline;
+    textBox2Outline.setSize(Vector2f(400.f, 60.f));
+    textBox2Outline.setFillColor(midGray);
+    textBox2Outline.setPosition(590.f, 210.f);
+
+    // Text that will store whatever the user types:
+    string userName = "";
+    string password = "";
+    string inputText = "";
+    int activeBox = 0;
+
+    // ----------------------------------------------
+
 
     // DINO HITBOX: ---------------------------------
     RectangleShape dinoHead;
@@ -101,11 +194,6 @@ int main() {
 
     // FONT FOR GAME TEXT: --------------------------------------------------
 
-    Font pressStart;
-    if (!pressStart.loadFromFile("gameTextFont/PressStart2P-Regular.ttf")) {
-        cerr << "Failed to load font\n";
-    }
-
     Text scoreText;
     scoreText.setFont(pressStart);                  // which font to use
     scoreText.setCharacterSize(35);                 // in pixels
@@ -128,7 +216,7 @@ int main() {
     High.setFont(pressStart);                      
     High.setCharacterSize(35);                     
     High.setFillColor(lightGray);                  
-    High.setPosition(1560 - (13 * 35), 10.f);     
+    High.setPosition(1560 - (13 * 35), 10.f);      
     
     Text HighScore;
     HighScore.setFont(pressStart);                      
@@ -160,7 +248,7 @@ int main() {
     const float gravity = 980.0f; // Pixels per second squared
     const float jumpVelocity = -935.0f; // Initial upward velocity for the jump
 
-    // Physics Variables we need
+    // Bool/Physics Variables we need
     float Y_Velocity = 0.0f; // Vertical velocity
     bool isJumping = false; // If dino is currently jumping in the air or not
     bool isDead = false;
@@ -169,6 +257,7 @@ int main() {
     bool is100MeterSFXPlayed = false;
     bool isScoreGone = false;
     bool every100Meters = false;
+    bool gameStart = false;
     float speed = -600.0f;
 
     // JUMP MECHANICS END HERE: -----------------------------------------------------------------------------------------------
@@ -535,9 +624,15 @@ int main() {
 
     // ------------------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
     // WINDOW FOR GAME SCREEN STARTS HERE: ------------------------------------------------------------------------------------
     
     while (dinoScreen.isOpen()) {
+
         // Time since last frames
         float deltaTime = clock.restart().asSeconds();        
         static float timeSinceLastFrame = 0.0f;
@@ -714,8 +809,91 @@ int main() {
 
         // Event object captures user input
         Event event;
-
         while (dinoScreen.pollEvent(event)) {
+
+            // SIGN UP AND LOGIN CODE -----------------------------------------------------------------------
+
+            if (gameStart == false) {
+                isDead = true;
+            }
+
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                if (textBox1.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    activeBox = 1;
+                }
+                else if (textBox2.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    activeBox = 2;
+                }
+                else {
+                    activeBox = 0;
+                }
+
+            }
+
+            if (activeBox == 1) {
+                textBox1Outline.setFillColor(green);
+                textBox2Outline.setFillColor(midGray);
+            }
+            else if (activeBox == 2) {
+                textBox2Outline.setFillColor(green);
+                textBox1Outline.setFillColor(midGray);
+            }
+            else {
+                textBox1Outline.setFillColor(midGray);
+                textBox2Outline.setFillColor(midGray); 
+            }
+
+            if (event.type == sf::Event::TextEntered) {
+                std::string* currentText = nullptr;
+
+                if (activeBox == 1) {
+                    currentText = &userName;
+                }
+                else if (activeBox == 2) {
+                    currentText = &password;
+                }
+
+                unsigned int unicode = event.text.unicode;
+
+                if (currentText != nullptr) {
+                    if (unicode == 8 && !currentText->empty()) {
+                        currentText->pop_back();
+                    }
+                    else if (unicode >= 32 && unicode <= 126) {
+                        *currentText += static_cast<char>(unicode);
+                    }
+                }
+            }
+
+
+            // IF PERSON PRESSES ENTER AFTER TYPING IN SOMETHING FOR USERNAME AND PASSWORD
+            if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
+                if (!userName.empty() && !password.empty()) {
+
+                    std::string serverMessage;
+                    bool success = tryRegister(userName, password, serverMessage);
+                    string currentUsername = "";
+
+                    if (success)
+                    {
+                        currentUsername = userName;
+                        signUpText.setPosition(-300.f, -300.f);
+                        loginText.setPosition(-300.f, -300.f);
+                        textBox1Outline.setPosition(-300.f, -300.f);
+                        textBox1.setPosition(-300.f, -300.f);
+                        textBox2Outline.setPosition(-300.f, -300.f);
+                        textBox2.setPosition(-300.f, -300.f);
+                        usernameText.setPosition(-300.f, -300.f);
+                        passwordText.setPosition(-300.f, -300.f);
+                    }
+                    
+                }
+            }
+            // SIGN UP AND LOGIN END CODE -------------------------------------------------------------------
+
+
+
+
             if (event.type == Event::Closed) { // I'm assuming this means that it checks if the user presses x on the window
                 dinoScreen.close();
             }
@@ -1246,7 +1424,7 @@ int main() {
                 if (speed < -1050) spacing += 150; 
                 if (speed < -1100) spacing += 200;  
                 if (speed < -1250) spacing += 250;  
-                      
+                    
                 pt.setPosition(pt.getPosition().x + spacing + 100, pt.getPosition().y);
             }     
         }
@@ -1410,11 +1588,11 @@ int main() {
             dinoScreen.clear(gray);
         }
 
-        dinoScreen.draw(scoreText);
-        dinoScreen.draw(zeros);
-        dinoScreen.draw(zeross);
-        dinoScreen.draw(High);
-        dinoScreen.draw(HighScore);
+        // Updating the text for signing in / logging in
+        usernameText.setString(userName);
+        
+        string hiddenPassword(password.length(), '*');
+        passwordText.setString(hiddenPassword);
 
         // DINO HITBOX LINES
         // dinoScreen.draw(dinoHitBoxLeft); 
@@ -1439,7 +1617,21 @@ int main() {
         dinoScreen.draw(pt);
         dinoScreen.draw(gameOver);
         dinoScreen.draw(resetButton);
+        dinoScreen.draw(scoreText);
+        dinoScreen.draw(zeros);
+        dinoScreen.draw(zeross);
+        dinoScreen.draw(High);
+        dinoScreen.draw(HighScore);
 
+
+        dinoScreen.draw(signUpText);
+        dinoScreen.draw(loginText);
+        dinoScreen.draw(textBox1Outline);
+        dinoScreen.draw(textBox1);
+        dinoScreen.draw(textBox2Outline);
+        dinoScreen.draw(textBox2);
+        dinoScreen.draw(usernameText);
+        dinoScreen.draw(passwordText);
 
         // IM PRETTY SURE THIS IS THE PTERODACTYL HITBOX
         // dinoScreen.draw(pterodactylHead); 

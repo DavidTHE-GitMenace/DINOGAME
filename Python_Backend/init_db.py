@@ -1,0 +1,25 @@
+import sqlite3 # importing a library/module so Python can use SQLite
+
+# Open or create a database file named dino.db, and let me talk to it
+# If dino.db doesn’t exist yet, SQLite creates it
+conn = sqlite3.connect("dino.db") 
+cursor = conn.cursor() # cursor is the object I use to actually send SQL commands
+
+# Run this SQL command on the database
+cursor.execute(""" 
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    best_score INTEGER NOT NULL DEFAULT 0
+)
+""")
+
+# PRIMARY KEY - this column is the main unique identifier for each row
+# UNIQUE - No two users can have the same value
+# NOT NULL - the column is required to have a value
+
+conn.commit() # this is basically the save button
+conn.close() # this closes the database connection when I'm done
+
+print("Database initialized successfully.")

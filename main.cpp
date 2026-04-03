@@ -48,6 +48,8 @@ int main() {
     const Color lightGray(100, 100, 100);
     const Color midGray(60, 60, 60);    
     const Color gray(30, 30, 30);
+    const Color lowGray(200, 200, 200);
+    
 
     // Dark grey with 50% transparency (solid is 255, transparent is 0)
     sf::Color semiTransparentDarkGrey(90, 90, 90, 128);
@@ -71,41 +73,62 @@ int main() {
     loginText.setFont(pressStart);                  // which font to use
     loginText.setCharacterSize(55);                 // in pixels
     loginText.setFillColor(lightGray);              // text color
-    loginText.setPosition(620.f, 400.f);            // screen position
+    loginText.setPosition(620.f, 300.f);            // screen position
     string login = "LOG IN";
     loginText.setString(login);
 
+    // UI FOR SIGNING IN AND LOGGING IN
     Text usernameText;
     usernameText.setFont(pressStart);
     usernameText.setCharacterSize(30);
     usernameText.setFillColor(lightGray);
-    usernameText.setPosition(605.f, 150.f);
+    usernameText.setPosition(605.f, 135.f);
 
     Text passwordText;
     passwordText.setFont(pressStart);
     passwordText.setCharacterSize(30);
     passwordText.setFillColor(lightGray);
-    passwordText.setPosition(605.f, 222.f);
+    passwordText.setPosition(605.f, 205.f);
 
     RectangleShape textBox1;
     textBox1.setSize(Vector2f(380.f, 50.f));
     textBox1.setFillColor(Color::White);
-    textBox1.setPosition(600.f, 140.f);
+    textBox1.setPosition(600.f, 120.f);
 
     RectangleShape textBox1Outline;
     textBox1Outline.setSize(Vector2f(400.f, 60.f));
     textBox1Outline.setFillColor(midGray);
-    textBox1Outline.setPosition(590.f, 135.f);
+    textBox1Outline.setPosition(590.f, 115.f);
 
     RectangleShape textBox2;
     textBox2.setSize(Vector2f(380.f, 50.f));
     textBox2.setFillColor(Color::White);
-    textBox2.setPosition(600.f, 215.f);
+    textBox2.setPosition(600.f, 195.f);
 
     RectangleShape textBox2Outline;
     textBox2Outline.setSize(Vector2f(400.f, 60.f));
     textBox2Outline.setFillColor(midGray);
-    textBox2Outline.setPosition(590.f, 210.f);
+    textBox2Outline.setPosition(590.f, 190.f);
+
+    RectangleShape textBox3;
+    textBox3.setSize(Vector2f(380.f, 50.f));
+    textBox3.setFillColor(Color::White);
+    textBox3.setPosition(600.f, 370.f);
+
+    RectangleShape textBox3Outline;
+    textBox3Outline.setSize(Vector2f(400.f, 60.f));
+    textBox3Outline.setFillColor(midGray);
+    textBox3Outline.setPosition(590.f, 365.f);
+
+    RectangleShape textBox4;
+    textBox4.setSize(Vector2f(380.f, 50.f));
+    textBox4.setFillColor(Color::White);
+    textBox4.setPosition(600.f, 445.f);
+
+    RectangleShape textBox4Outline;
+    textBox4Outline.setSize(Vector2f(400.f, 60.f));
+    textBox4Outline.setFillColor(midGray);
+    textBox4Outline.setPosition(590.f, 440.f);
 
     // Text that will store whatever the user types:
     string userName = "";
@@ -160,7 +183,6 @@ int main() {
     pterodactylUpperWing3.setSize(Vector2f(17, 20));
     pterodactylUpperWing3.setFillColor(red);
 
-    
     // ---------------------------------------------
 
     RectangleShape dinoHitBoxLeft;
@@ -198,37 +220,36 @@ int main() {
     scoreText.setFont(pressStart);                  // which font to use
     scoreText.setCharacterSize(35);                 // in pixels
     scoreText.setFillColor(lightGray);              // text color
-    scoreText.setPosition(1560.f, 10.f);            // screen position
+    scoreText.setPosition(1560.f, -1000.f);            // screen position
 
     Text zeros;
     zeros.setFont(pressStart);                      
     zeros.setCharacterSize(35);                     
     zeros.setFillColor(lightGray);                  
-    zeros.setPosition(1560 - (4 * 35), 10.f);       
+    zeros.setPosition(1560 - (4 * 35), -1000.f);       
 
     Text zeross;
     zeross.setFont(pressStart);                      
     zeross.setCharacterSize(35);                     
     zeross.setFillColor(lightGray);                  
-    zeross.setPosition(1560 - (10 * 35), 10.f);     
+    zeross.setPosition(1560 - (10 * 35), -1000.f);     
     
     Text High;
     High.setFont(pressStart);                      
     High.setCharacterSize(35);                     
     High.setFillColor(lightGray);                  
-    High.setPosition(1560 - (13 * 35), 10.f);      
+    High.setPosition(1560 - (13 * 35), -1000.f);      
     
     Text HighScore;
     HighScore.setFont(pressStart);                      
     HighScore.setCharacterSize(35);                     
     HighScore.setFillColor(lightGray);                  
-    HighScore.setPosition(1560 - (6 * 35), 10.f);     
+    HighScore.setPosition(1560 - (6 * 35), -1000.f);     
 
     Text MetersModulusedby100;
     MetersModulusedby100.setFont(pressStart);                      
     MetersModulusedby100.setCharacterSize(35);                     
-    MetersModulusedby100.setFillColor(lightGray);                  
-    
+    MetersModulusedby100.setFillColor(lightGray);                      
     
     string highscore = "HI";
     string zeroString = "00000";
@@ -658,12 +679,6 @@ int main() {
                 speed -= 0.002;
             } 
         }        
-
-        // if game hasn't started, take the "Game Over title" and the reset button off the screen
-        // if (!gameStart) {
-        //     gameOver.setPosition(800, -200);
-        //     resetButton.setPosition(800, -200);
-        // }
         
 
         // distance score:
@@ -677,7 +692,7 @@ int main() {
                 if (distance == 1) {
                     zeroString = "0000";
                     zeros.setString(zeroString);
-                    scoreText.setPosition(scoreText.getPosition().x, 10);                
+                    if (gameStart) scoreText.setPosition(scoreText.getPosition().x, 10);                
                 }
                 if (distance == 10) {
                     zeroString = "000";
@@ -810,6 +825,8 @@ int main() {
         // pterodactylUpperWing1.setPosition(ptShrunk.left + 38.252, ptShrunk.top + 23);
         pterodactylUpperWing2.setPosition(ptShrunk.left + 37.252, ptShrunk.top + 25);
         pterodactylUpperWing3.setPosition(ptShrunk.left + 55.252, ptShrunk.top + 40);
+
+        // BEFORE THE GAME
         
 
 
@@ -826,22 +843,46 @@ int main() {
                 else if (textBox2.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
                     activeBox = 2;
                 }
+                else if (textBox3.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    activeBox = 3;
+                }
+                else if (textBox4.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    activeBox = 4;
+                }
                 else {
                     activeBox = 0;
                 }
             }
 
             if (activeBox == 1) {
-                textBox1Outline.setFillColor(green);
-                textBox2Outline.setFillColor(midGray);
+                textBox1.setFillColor(lowGray);
+                textBox2.setFillColor(Color::White);
+                textBox3.setFillColor(Color::White);
+                textBox4.setFillColor(Color::White);
             }
             else if (activeBox == 2) {
-                textBox2Outline.setFillColor(green);
-                textBox1Outline.setFillColor(midGray);
+                textBox1.setFillColor(Color::White);
+                textBox2.setFillColor(lowGray);
+                textBox3.setFillColor(Color::White);
+                textBox4.setFillColor(Color::White);
+            }
+            else if (activeBox == 3) {
+                textBox1.setFillColor(Color::White);
+                textBox2.setFillColor(Color::White);
+                textBox3.setFillColor(lowGray);
+                textBox4.setFillColor(Color::White);
+            }
+            else if (activeBox == 4) {
+                textBox1.setFillColor(Color::White);
+                textBox2.setFillColor(Color::White);
+                textBox3.setFillColor(Color::White);
+                textBox4.setFillColor(lowGray);
             }
             else {
-                textBox1Outline.setFillColor(midGray);
-                textBox2Outline.setFillColor(midGray); 
+                textBox1.setFillColor(Color::White);
+                textBox2.setFillColor(Color::White);
+                textBox3.setFillColor(Color::White);
+                textBox4.setFillColor(Color::White);
             }
 
             if (event.type == sf::Event::TextEntered) {
@@ -895,7 +936,6 @@ int main() {
                         zeross.setPosition(1560 - (10 * 35), 10.f);     
                         High.setPosition(1560 - (13 * 35), 10.f);      
                         HighScore.setPosition(1560 - (6 * 35), 10.f);     
-                        dinoFrameSprite.setPosition(40, 455);
 
 
                     } 
@@ -1651,6 +1691,11 @@ int main() {
         dinoScreen.draw(textBox1);
         dinoScreen.draw(textBox2Outline);
         dinoScreen.draw(textBox2);
+        dinoScreen.draw(textBox3Outline);
+        dinoScreen.draw(textBox3);
+        dinoScreen.draw(textBox4Outline);
+        dinoScreen.draw(textBox4);
+        
         dinoScreen.draw(usernameText);
         dinoScreen.draw(passwordText);
 

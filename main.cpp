@@ -658,6 +658,12 @@ int main() {
                 speed -= 0.002;
             } 
         }        
+
+        // if game hasn't started, take the "Game Over title" and the reset button off the screen
+        // if (!gameStart) {
+        //     gameOver.setPosition(800, -200);
+        //     resetButton.setPosition(800, -200);
+        // }
         
 
         // distance score:
@@ -813,10 +819,6 @@ int main() {
 
             // SIGN UP AND LOGIN CODE -----------------------------------------------------------------------
 
-            if (gameStart == false) {
-                isDead = true;
-            }
-
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 if (textBox1.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
                     activeBox = 1;
@@ -827,7 +829,6 @@ int main() {
                 else {
                     activeBox = 0;
                 }
-
             }
 
             if (activeBox == 1) {
@@ -874,9 +875,11 @@ int main() {
                     bool success = tryRegister(userName, password, serverMessage);
                     string currentUsername = "";
 
-                    if (success)
-                    {
+                    if (success) {
+                        gameStart = true; // the game will start
                         currentUsername = userName;
+
+                        // TAKE OFF THE SIGNUP AND LOGIN
                         signUpText.setPosition(-300.f, -300.f);
                         loginText.setPosition(-300.f, -300.f);
                         textBox1Outline.setPosition(-300.f, -300.f);
@@ -885,8 +888,17 @@ int main() {
                         textBox2.setPosition(-300.f, -300.f);
                         usernameText.setPosition(-300.f, -300.f);
                         passwordText.setPosition(-300.f, -300.f);
-                    }
-                    
+
+                        // PUTTING ALL THE GAME UI INTO PLACE
+                        scoreText.setPosition(1560.f, 10.f);            
+                        zeros.setPosition(1560 - (4 * 35), 10.f);       
+                        zeross.setPosition(1560 - (10 * 35), 10.f);     
+                        High.setPosition(1560 - (13 * 35), 10.f);      
+                        HighScore.setPosition(1560 - (6 * 35), 10.f);     
+                        dinoFrameSprite.setPosition(40, 455);
+
+
+                    } 
                 }
             }
             // SIGN UP AND LOGIN END CODE -------------------------------------------------------------------
@@ -1229,11 +1241,13 @@ int main() {
             !dinoBody1.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
             !dinoBody2.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
             !dinoBody3.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
-            !dinoBody4.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()))  { 
+            !dinoBody4.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) &&
+        
+            gameStart)  { 
+            
 
-
-            isDead = false;
             isDeadSFXPlayed = false;
+            isDead = false;
             gameOver.setPosition(800, -200);
             resetButton.setPosition(800, -200);
             cactusSprite1.move(speed * deltaTime, 0); // dino will keep moving
@@ -1287,12 +1301,19 @@ int main() {
             dinoFrameSprite.setTexture(dinoFrameTexture);
             dinoFrameSprite.setTextureRect(IntRect(dinoFrameXPosition + 88, dinoFrameYPosition, dinoFrameWidth, dinoFrameHeight));
             dinoFrameSprite.setPosition(40, dinoFrameSprite.getPosition().y);
-            gameOver.setPosition(500, 250);
-            resetButton.setPosition(730, 300);
+            
+            if (gameStart) {
+                gameOver.setPosition(500, 250);
+                resetButton.setPosition(730, 300);
                 if (!isDeadSFXPlayed) {
                     death.play();
                     isDeadSFXPlayed = true;
                 }            
+            }
+            else {
+                dinoFrameSprite.setTexture(dinoFrameTexture);
+                dinoFrameSprite.setTextureRect(IntRect(dinoFrameXPosition - (3 * 88), dinoFrameYPosition, dinoFrameWidth, dinoFrameHeight));
+            }
         }
         else if (isJumping) {
             // Apply gravity and update position of dino

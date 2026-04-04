@@ -2,16 +2,15 @@
 using namespace std;
 #include <SFML/Graphics.hpp> // This is the graphics software used for the 2D game
 #include <SFML/Audio.hpp> // Audio inclusion
-#include <SFML/Network.hpp>
+#include <SFML/Network.hpp> // So this game can connect to the API server
 using namespace sf;
 #include <random>
 #include <chrono>
 #include <cstddef>
 #include <string>
 
-// API Stuff
-bool tryRegister(const std::string& username, const std::string& password, std::string& serverMessage)
-{
+// API STUFF ------------------------------------------------------------------------------------------------
+bool tryRegister(const std::string& username, const std::string& password, std::string& serverMessage) {
     sf::Http http("http://127.0.0.1", 5000);
 
     sf::Http::Request request;
@@ -19,8 +18,7 @@ bool tryRegister(const std::string& username, const std::string& password, std::
     request.setUri("/register");
     request.setField("Content-Type", "application/json");
 
-    std::string body =
-        "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+    std::string body = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
     request.setBody(body);
 
@@ -35,6 +33,54 @@ bool tryRegister(const std::string& username, const std::string& password, std::
     return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
 }
 
+bool tryLogin(const std::string& username, const std::string& password, std::string& serverMessage) {
+    Http http("http://127.0.0.1", 5000);
+
+    Http::Request request;
+    request.setMethod(sf::Http::Request::Post);
+    request.setUri("/login");
+    request.setField("Content-Type", "application/json");
+
+    string body = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+
+    request.setBody(body);
+
+    Http::Response response = http.sendRequest(request);
+
+    cout << "STATUS: " << response.getStatus() << '\n';
+    cout << "BODY: " << response.getBody() << '\n';
+
+    serverMessage = response.getBody();
+
+    // Your register route probably returns 201 on success
+    return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+}
+
+void tryUpdateScore(const std::string& username, const int& score, std::string& serverMessage) {
+    Http http("http://127.0.0.1", 5000);
+
+    Http::Request request;
+    request.setMethod(sf::Http::Request::Post);
+    request.setUri("/update_score");
+    request.setField("Content-Type", "application/json");
+
+    string body = "{\"username\":\"" + username + "\",\"score\":\"" + to_string(score) + "\"}";
+
+    request.setBody(body);
+
+    Http::Response response = http.sendRequest(request);
+
+    cout << "STATUS: " << response.getStatus() << '\n';
+    cout << "BODY: " << response.getBody() << '\n';
+
+    serverMessage = response.getBody();
+
+    // Your register route probably returns 201 on success
+    // return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+}
+// ----------------------------------------------------------------------------------------------------------
+
+
 int main() {
     // Creating a Window
     RenderWindow dinoScreen(VideoMode(1600, 900), "Dino Window");
@@ -43,6 +89,7 @@ int main() {
     // Colors that I need to custom make
     const Color red(255, 0, 0);
     const Color blue(0, 0, 255);
+    const Color lightBlue(173, 216, 230);    
     const Color green(0, 255, 0);
     const Color purple(0, 255, 255);
     const Color lightGray(100, 100, 100);
@@ -55,7 +102,8 @@ int main() {
     sf::Color semiTransparentDarkGrey(90, 90, 90, 128);
 
 
-    // TEXTBOXES FOR LOGIN AND SIGNUP: --------------
+
+    // TEXTBOXES FOR LOGIN AND SIGNUP: --------------------------------------------------
     Font pressStart;
     if (!pressStart.loadFromFile("gameTextFont/PressStart2P-Regular.ttf")) {
         cerr << "Failed to load font\n";
@@ -65,17 +113,36 @@ int main() {
     signUpText.setFont(pressStart);                  // which font to use
     signUpText.setCharacterSize(55);                // in pixels
     signUpText.setFillColor(lightGray);              // text color
-    signUpText.setPosition(600.f, 50.f);            // screen position
+    signUpText.setPosition(595.f, 50.f);            // screen position
     string signUp = "SIGN UP";
     signUpText.setString(signUp);
+    
+    RectangleShape signUpTextBox;
+    signUpTextBox.setSize(Vector2f(390.f, 60.f));
+    signUpTextBox.setFillColor(lowGray);
+    signUpTextBox.setPosition(-590.f, -45.f);
+    // set the position of the box on the text at 595.f, 45.f
+
+    Text orText;
+    orText.setFont(pressStart);                  // which font to use
+    orText.setCharacterSize(45);                // in pixels
+    orText.setFillColor(lightGray);              // text color
+    orText.setPosition(730.f, 150.f);            // screen position
+    string orr = "OR";
+    orText.setString(orr);
 
     Text loginText;
     loginText.setFont(pressStart);                  // which font to use
     loginText.setCharacterSize(55);                 // in pixels
     loginText.setFillColor(lightGray);              // text color
-    loginText.setPosition(620.f, 300.f);            // screen position
+    loginText.setPosition(615.f, 230.f);            // screen position
     string login = "LOG IN";
     loginText.setString(login);
+
+    RectangleShape logInTextBox;
+    logInTextBox.setSize(Vector2f(329.f, 60.f));
+    logInTextBox.setFillColor(lowGray);
+    logInTextBox.setPosition(-616.f, -225.f);
 
     // UI FOR SIGNING IN AND LOGGING IN
     Text usernameText;
@@ -93,48 +160,43 @@ int main() {
     RectangleShape textBox1;
     textBox1.setSize(Vector2f(380.f, 50.f));
     textBox1.setFillColor(Color::White);
-    textBox1.setPosition(600.f, 120.f);
+    textBox1.setPosition(-600.f, -120.f);
 
     RectangleShape textBox1Outline;
     textBox1Outline.setSize(Vector2f(400.f, 60.f));
     textBox1Outline.setFillColor(midGray);
-    textBox1Outline.setPosition(590.f, 115.f);
+    textBox1Outline.setPosition(-590.f, -115.f);
 
     RectangleShape textBox2;
     textBox2.setSize(Vector2f(380.f, 50.f));
     textBox2.setFillColor(Color::White);
-    textBox2.setPosition(600.f, 195.f);
+    textBox2.setPosition(-600.f, -195.f);
 
     RectangleShape textBox2Outline;
     textBox2Outline.setSize(Vector2f(400.f, 60.f));
     textBox2Outline.setFillColor(midGray);
-    textBox2Outline.setPosition(590.f, 190.f);
+    textBox2Outline.setPosition(-590.f, -190.f);
 
-    RectangleShape textBox3;
-    textBox3.setSize(Vector2f(380.f, 50.f));
-    textBox3.setFillColor(Color::White);
-    textBox3.setPosition(600.f, 370.f);
+    Text backText;
+    backText.setFont(pressStart);
+    backText.setCharacterSize(20);
+    backText.setFillColor(lightGray);
+    backText.setPosition(-25.f, -25.f);
+    string back = "<BACK";
+    backText.setString(back);
 
-    RectangleShape textBox3Outline;
-    textBox3Outline.setSize(Vector2f(400.f, 60.f));
-    textBox3Outline.setFillColor(midGray);
-    textBox3Outline.setPosition(590.f, 365.f);
-
-    RectangleShape textBox4;
-    textBox4.setSize(Vector2f(380.f, 50.f));
-    textBox4.setFillColor(Color::White);
-    textBox4.setPosition(600.f, 445.f);
-
-    RectangleShape textBox4Outline;
-    textBox4Outline.setSize(Vector2f(400.f, 60.f));
-    textBox4Outline.setFillColor(midGray);
-    textBox4Outline.setPosition(590.f, 440.f);
+    RectangleShape backTextBox;
+    backTextBox.setSize(Vector2f(105.f, 30.f));
+    backTextBox.setFillColor(lowGray);
+    backTextBox.setPosition(25, 20);
 
     // Text that will store whatever the user types:
     string userName = "";
     string password = "";
     string inputText = "";
     int activeBox = 0;
+    bool signUpFlag = false;
+    bool loginFlag = false;
 
     // ----------------------------------------------
 
@@ -716,20 +778,17 @@ int main() {
                     zeros.setString(zeroString);
                     scoreText.setPosition(scoreText.getPosition().x - 35, 10);                
                 } 
-
-
             }
-
         }
 
 
         // blinking every 100 meters:
         if (distance % 100 == 0 && distance != 0) {
             every100Meters = true;
-                if (!is100MeterSFXPlayed) {
-                    meters_100.play();
-                    is100MeterSFXPlayed = true;
-                }            
+            if (!is100MeterSFXPlayed) {
+                meters_100.play();
+                is100MeterSFXPlayed = true;
+            }            
         }
 
         if (every100Meters) {
@@ -836,18 +895,84 @@ int main() {
 
             // SIGN UP AND LOGIN CODE -----------------------------------------------------------------------
 
+
+            // CURSOR HOVERING OVER SIGN UP AND LOGIN
+            if (event.type == sf::Event::MouseMoved) {
+                if (signUpText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    if (!signUpFlag) signUpTextBox.setPosition(590.f, 45.f);
+                }
+                else {
+                    signUpTextBox.setPosition(-590.f, -45.f);
+                }
+
+                if (loginText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    if (!loginFlag) logInTextBox.setPosition(616.f, 225.f);
+                }
+                else {
+                    logInTextBox.setPosition(-616.f, -225.f);
+                }
+
+                if (backText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    backTextBox.setPosition(25.f, 20.f);
+                }
+                else {
+                    backTextBox.setPosition(-616.f, -225.f);
+                }
+
+            }   
+
+            // TYPING INTO TEXTBOXES
             if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                // IF YOU CLICK SIGN UP
+                if (signUpText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    orText.setPosition(-616.f, -225.f);
+                    loginText.setPosition(-616.f, -225.f);
+                    signUpTextBox.setPosition(-616.f, -225.f);
+
+                    textBox1.setPosition(600.f, 120.f);
+                    textBox1Outline.setPosition(590.f, 115.f);
+                    textBox2.setPosition(600.f, 195.f);
+                    textBox2Outline.setPosition(590.f, 190.f);
+                    backText.setPosition(25.f, 25.f);
+                    signUpFlag = true;
+                }
+
+                if (loginText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    loginText.setPosition(616.f, 50.f);
+                    logInTextBox.setPosition(-616.f, -225.f);
+                    orText.setPosition(-616.f, -225.f);
+                    signUpText.setPosition(-616.f, -225.f);
+
+                    textBox1.setPosition(600.f, 120.f);
+                    textBox1Outline.setPosition(590.f, 115.f);
+                    textBox2.setPosition(600.f, 195.f);
+                    textBox2Outline.setPosition(590.f, 190.f);
+                    backText.setPosition(25.f, 25.f);
+                    loginFlag = true;
+                }
+
+                if (backText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    textBox1.setPosition(-600.f, -120.f);
+                    textBox1Outline.setPosition(-590.f, -115.f);
+                    textBox2.setPosition(-600.f, -195.f);
+                    textBox2Outline.setPosition(-590.f, -190.f);
+                    signUpText.setPosition(595.f, 50.f);            
+                    orText.setPosition(730.f, 150.f);            
+                    loginText.setPosition(615.f, 230.f);    
+                    backText.setPosition(-25.f, -25.f);
+                    backTextBox.setPosition(-225.f, -225.f);
+                    userName = password = "";
+
+                    loginFlag = signUpFlag = false;
+                }
+                
+                
+                // INDICATING WHICH TEXTBOX IS BEING TYPED IN
                 if (textBox1.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
                     activeBox = 1;
                 }
                 else if (textBox2.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
                     activeBox = 2;
-                }
-                else if (textBox3.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
-                    activeBox = 3;
-                }
-                else if (textBox4.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
-                    activeBox = 4;
                 }
                 else {
                     activeBox = 0;
@@ -857,32 +982,14 @@ int main() {
             if (activeBox == 1) {
                 textBox1.setFillColor(lowGray);
                 textBox2.setFillColor(Color::White);
-                textBox3.setFillColor(Color::White);
-                textBox4.setFillColor(Color::White);
             }
             else if (activeBox == 2) {
                 textBox1.setFillColor(Color::White);
                 textBox2.setFillColor(lowGray);
-                textBox3.setFillColor(Color::White);
-                textBox4.setFillColor(Color::White);
-            }
-            else if (activeBox == 3) {
-                textBox1.setFillColor(Color::White);
-                textBox2.setFillColor(Color::White);
-                textBox3.setFillColor(lowGray);
-                textBox4.setFillColor(Color::White);
-            }
-            else if (activeBox == 4) {
-                textBox1.setFillColor(Color::White);
-                textBox2.setFillColor(Color::White);
-                textBox3.setFillColor(Color::White);
-                textBox4.setFillColor(lowGray);
             }
             else {
                 textBox1.setFillColor(Color::White);
                 textBox2.setFillColor(Color::White);
-                textBox3.setFillColor(Color::White);
-                textBox4.setFillColor(Color::White);
             }
 
             if (event.type == sf::Event::TextEntered) {
@@ -911,10 +1018,17 @@ int main() {
             // IF PERSON PRESSES ENTER AFTER TYPING IN SOMETHING FOR USERNAME AND PASSWORD
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
                 if (!userName.empty() && !password.empty()) {
-
-                    std::string serverMessage;
-                    bool success = tryRegister(userName, password, serverMessage);
+                    bool success;
                     string currentUsername = "";
+
+                    if (signUpFlag) {
+                        std::string serverMessage;
+                        success = tryRegister(userName, password, serverMessage);
+                    }
+                    else if (loginFlag) {
+                        std::string serverMessage;
+                        success = tryLogin(userName, password, serverMessage);
+                    }
 
                     if (success) {
                         gameStart = true; // the game will start
@@ -929,13 +1043,15 @@ int main() {
                         textBox2.setPosition(-300.f, -300.f);
                         usernameText.setPosition(-300.f, -300.f);
                         passwordText.setPosition(-300.f, -300.f);
+                        backText.setPosition(-25.f, -25.f);
+                        backTextBox.setPosition(-225.f, -225.f);
 
                         // PUTTING ALL THE GAME UI INTO PLACE
                         scoreText.setPosition(1560.f, 10.f);            
                         zeros.setPosition(1560 - (4 * 35), 10.f);       
                         zeross.setPosition(1560 - (10 * 35), 10.f);     
                         High.setPosition(1560 - (13 * 35), 10.f);      
-                        HighScore.setPosition(1560 - (6 * 35), 10.f);     
+                        HighScore.setPosition(1560 - (6 * 35), 10.f);  
 
 
                     } 
@@ -951,159 +1067,163 @@ int main() {
             }
 
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Space) { // if the user presses space
-                if (isDead) {
-                    dist2 = std::uniform_int_distribution<int>(2400, 2450);
-                    cactus2distance = dist2(mt);
-                    switch (currentCactus) {
-                        case 0: // one cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 470);
-                            cactusSprite1.setScale(1.5f, 1.5f);
+                if (gameStart) {
+                    if (isDead) {
+                        dist2 = std::uniform_int_distribution<int>(2400, 2450);
+                        cactus2distance = dist2(mt);
+                        switch (currentCactus) {
+                            case 0: // one cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 470);
+                                cactusSprite1.setScale(1.5f, 1.5f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 470);
-                            cactusSprite2.setScale(1.5f, 1.5f);
-                            break;
-                        case 1: // one small cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 500);
-                            cactusSprite1.setScale(1.2f, 1.2f);
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 470);
+                                cactusSprite2.setScale(1.5f, 1.5f);
+                                break;
+                            case 1: // one small cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 500);
+                                cactusSprite1.setScale(1.2f, 1.2f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 500);
-                            cactusSprite2.setScale(1.2f, 1.2f);
-                            break;
-                        case 2: // two cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 460);
-                            cactusSprite1.setScale(1.3f, 1.3f);
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 500);
+                                cactusSprite2.setScale(1.2f, 1.2f);
+                                break;
+                            case 2: // two cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 460);
+                                cactusSprite1.setScale(1.3f, 1.3f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 460);
-                            cactusSprite2.setScale(1.3f, 1.3f);
-                            break;
-                        case 3: // two small cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 501);
-                            cactusSprite1.setScale(1.2f, 1.2f);
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 460);
+                                cactusSprite2.setScale(1.3f, 1.3f);
+                                break;
+                            case 3: // two small cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 501);
+                                cactusSprite1.setScale(1.2f, 1.2f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 501);
-                            cactusSprite2.setScale(1.2f, 1.2f);
-                            break;
-                        case 4: // three small cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 502);
-                            cactusSprite1.setScale(1.15f, 1.15f);
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 501);
+                                cactusSprite2.setScale(1.2f, 1.2f);
+                                break;
+                            case 4: // three small cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 502);
+                                cactusSprite1.setScale(1.15f, 1.15f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 502);
-                            cactusSprite2.setScale(1.15f, 1.15f);
-                            break;
-                        case 5: // four cacti
-                            cactusSprite1.setTexture(cactiTextures[idx], true);
-                            cactusSprite1.setPosition(cactus1distance, 463);
-                            cactusSprite1.setScale(1.25f, 1.25f);
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 502);
+                                cactusSprite2.setScale(1.15f, 1.15f);
+                                break;
+                            case 5: // four cacti
+                                cactusSprite1.setTexture(cactiTextures[idx], true);
+                                cactusSprite1.setPosition(cactus1distance, 463);
+                                cactusSprite1.setScale(1.25f, 1.25f);
 
-                            cactusSprite2.setTexture(cactiTextures[idx], true);
-                            cactusSprite2.setPosition(cactus2distance, 463);
-                            cactusSprite2.setScale(1.25f, 1.25f);
-                            break;
+                                cactusSprite2.setTexture(cactiTextures[idx], true);
+                                cactusSprite2.setPosition(cactus2distance, 463);
+                                cactusSprite2.setScale(1.25f, 1.25f);
+                                break;
+                        }
+
+                        switch (ptYLevel) {                     // RANDOMIZING THE PTERODACTYL POSITION
+                            case 1:
+                                pt.setPosition(ptDistance, 470);
+                                // cout << "Resetting game: pterodactyl distance 1" << endl;
+                                break;
+                            case 2:
+                                pt.setPosition(ptDistance, 405);
+                                // cout << "Resetting game: pterodactyl distance 2" << endl;
+                                break;
+                            case 3:
+                                pt.setPosition(ptDistance, 350);
+                                // cout << "Resetting game: pterodactyl distance 3" << endl;
+                                break;
+                        }
+        
+                        isDead = false;
+                        every100Meters = false;
+                        gameOver.setPosition(800, -200);
+                        resetButton.setPosition(800, -200);
+                        zeros.setPosition(zeros.getPosition().x, 10);
+                        scoreText.setPosition(scoreText.getPosition().x, 10);
+
+                        cloudSize = cloudSizeRandomizer(mt);                // CHANGING UP THE CLOUDS
+                        cloud.setPosition(cactus1distance, cloudYLevel);
+                        cloud.setScale(cloudSize, cloudSize);
+
+                        cloudSize = cloudSizeRandomizer(mt);
+                        cactus1distance = dist(mt);
+                        cloudYLevel = cloudYLevelRandomizer(mt);
+                        cloud2.setPosition(cactus1distance, cloudYLevel);
+                        cloud.setScale(cloudSize, cloudSize);
+                        scoreText.setPosition(1560.f, 10.f);     
+                        zeros.setPosition(1560 - (4 * 35), 10.f);      
+                        zeroString = "0000";
+                        zeros.setString(zeroString);
+
+                        if (maxDistance < distance) { // FOR CHANGING THE HIGHSCORE IF THE USER GOES FURTHER THAN HIGHSCORE DISTANCE
+                            maxDistance = distance;
+                            HighScore.setString(to_string(maxDistance));
+                            if (maxDistance > 10000) {
+                                // cout << "maxDistance is greater than 10000, and user pressed space." << endl;
+                                zeroString2 = "";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1175 + 35, 10);
+                            }
+                            else if (maxDistance > 1000) {
+                                // cout << "maxDistance is greater than 1000, and user pressed space." << endl;
+                                zeroString2 = "0";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1210 + 35, 10);
+                            }
+                            else if (maxDistance > 100) {
+                                // cout << "maxDistance is greater than 100, and user pressed space." << endl;
+                                zeroString2 = "00";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1245 + 35, 10);
+                            }
+                            else if (maxDistance > 10) {
+                                // cout << "maxDistance is greater than 10, and user pressed space." << endl;
+                                zeroString2 = "000";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1280 + 35, 10);
+                            }                        
+                        } 
+
+                        // cout << HighScore.getPosition().x - (1 * 35) << endl;
+                        // cout << HighScore.getPosition().x - (2 * 35) << endl;
+                        // cout << HighScore.getPosition().x - (3 * 35) << endl;
+                        // cout << HighScore.getPosition().x - (4 * 35) << endl;
+
+                        distance = 0;
+                        speed = -600;
+                        ptFrameDuration = 0.5f;
+                        gameTime = 0;
+                        distanceCalculation = 0.1f;
+                        every100Meters = false;
+
                     }
 
-                    switch (ptYLevel) {                     // RANDOMIZING THE PTERODACTYL POSITION
-                        case 1:
-                            pt.setPosition(ptDistance, 470);
-                            // cout << "Resetting game: pterodactyl distance 1" << endl;
-                            break;
-                        case 2:
-                            pt.setPosition(ptDistance, 405);
-                            // cout << "Resetting game: pterodactyl distance 2" << endl;
-                            break;
-                        case 3:
-                            pt.setPosition(ptDistance, 350);
-                            // cout << "Resetting game: pterodactyl distance 3" << endl;
-                            break;
+                    dinoFrameSprite.setTextureRect(IntRect(dinoFrameXPosition - (3 * 88), dinoFrameYPosition, dinoFrameWidth, dinoFrameHeight));
+                    if (!isJumping) { // if the dino is already jumping
+                        Y_Velocity = jumpVelocity; // the dino's y velocity will be negative, making the dino fall
+                        isJumping = true;   
+                        jump.play();               
+                        
                     }
-    
-                    isDead = false;
-                    every100Meters = false;
-                    gameOver.setPosition(800, -200);
-                    resetButton.setPosition(800, -200);
-                    zeros.setPosition(zeros.getPosition().x, 10);
-                    scoreText.setPosition(scoreText.getPosition().x, 10);
-
-                    cloudSize = cloudSizeRandomizer(mt);                // CHANGING UP THE CLOUDS
-                    cloud.setPosition(cactus1distance, cloudYLevel);
-                    cloud.setScale(cloudSize, cloudSize);
-
-                    cloudSize = cloudSizeRandomizer(mt);
-                    cactus1distance = dist(mt);
-                    cloudYLevel = cloudYLevelRandomizer(mt);
-                    cloud2.setPosition(cactus1distance, cloudYLevel);
-                    cloud.setScale(cloudSize, cloudSize);
-                    scoreText.setPosition(1560.f, 10.f);     
-                    zeros.setPosition(1560 - (4 * 35), 10.f);      
-                    zeroString = "0000";
-                    zeros.setString(zeroString);
-
-                    if (maxDistance < distance) { // FOR CHANGING THE HIGHSCORE IF THE USER GOES FURTHER THAN HIGHSCORE DISTANCE
-                        maxDistance = distance;
-                        HighScore.setString(to_string(maxDistance));
-                        if (maxDistance > 10000) {
-                            // cout << "maxDistance is greater than 10000, and user pressed space." << endl;
-                            zeroString2 = "";
-                            zeross.setString(zeroString2);
-                            HighScore.setPosition(1175 + 35, 10);
-                        }
-                        else if (maxDistance > 1000) {
-                            // cout << "maxDistance is greater than 1000, and user pressed space." << endl;
-                            zeroString2 = "0";
-                            zeross.setString(zeroString2);
-                            HighScore.setPosition(1210 + 35, 10);
-                        }
-                        else if (maxDistance > 100) {
-                            // cout << "maxDistance is greater than 100, and user pressed space." << endl;
-                            zeroString2 = "00";
-                            zeross.setString(zeroString2);
-                            HighScore.setPosition(1245 + 35, 10);
-                        }
-                        else if (maxDistance > 10) {
-                            // cout << "maxDistance is greater than 10, and user pressed space." << endl;
-                            zeroString2 = "000";
-                            zeross.setString(zeroString2);
-                            HighScore.setPosition(1280 + 35, 10);
-                        }                        
-                    } 
-
-                    // cout << HighScore.getPosition().x - (1 * 35) << endl;
-                    // cout << HighScore.getPosition().x - (2 * 35) << endl;
-                    // cout << HighScore.getPosition().x - (3 * 35) << endl;
-                    // cout << HighScore.getPosition().x - (4 * 35) << endl;
-
-                    distance = 0;
-                    speed = -600;
-                    ptFrameDuration = 0.5f;
-                    gameTime = 0;
-                    distanceCalculation = 0.1f;
-                    every100Meters = false;
-
-                }
-
-                dinoFrameSprite.setTextureRect(IntRect(dinoFrameXPosition - (3 * 88), dinoFrameYPosition, dinoFrameWidth, dinoFrameHeight));
-                if (!isJumping) { // if the dino is already jumping
-                    Y_Velocity = jumpVelocity; // the dino's y velocity will be negative, making the dino fall
-                    isJumping = true;   
-                    jump.play();               
-                    
                 }
             }
-            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) { // if the user presses space
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Up) { // if the user presses the up arrow
                 dinoFrameSprite.setTextureRect(IntRect(dinoFrameXPosition - (3 * 88), dinoFrameYPosition, dinoFrameWidth, dinoFrameHeight));
-                if (!isJumping) { // if the dino is already jumping
-                    Y_Velocity = jumpVelocity; // the dino's y velocity will be negative, making the dino fall
-                    isJumping = true;                    
-                    jump.play();
+                if (gameStart) {
+                    if (!isJumping) { // if the dino is already jumping
+                        Y_Velocity = jumpVelocity; // the dino's y velocity will be negative, making the dino fall
+                        isJumping = true;                    
+                        jump.play();
+                    }
                 }
             }
 
@@ -1348,6 +1468,10 @@ int main() {
                 if (!isDeadSFXPlayed) {
                     death.play();
                     isDeadSFXPlayed = true;
+                    std::string serverMessage;
+                    tryUpdateScore(userName, distance, serverMessage);
+                    cout << maxDistance << endl;
+
                 }            
             }
             else {
@@ -1684,17 +1808,17 @@ int main() {
         dinoScreen.draw(High);
         dinoScreen.draw(HighScore);
 
-
+        dinoScreen.draw(signUpTextBox);
         dinoScreen.draw(signUpText);
+        dinoScreen.draw(orText);
+        dinoScreen.draw(logInTextBox);
         dinoScreen.draw(loginText);
         dinoScreen.draw(textBox1Outline);
         dinoScreen.draw(textBox1);
         dinoScreen.draw(textBox2Outline);
         dinoScreen.draw(textBox2);
-        dinoScreen.draw(textBox3Outline);
-        dinoScreen.draw(textBox3);
-        dinoScreen.draw(textBox4Outline);
-        dinoScreen.draw(textBox4);
+        dinoScreen.draw(backTextBox);
+        dinoScreen.draw(backText);
         
         dinoScreen.draw(usernameText);
         dinoScreen.draw(passwordText);

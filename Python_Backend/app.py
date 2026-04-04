@@ -156,7 +156,7 @@ def update_score():
     finally:
         conn.close()
 
-    return jsonify({"message": "Score checked, best score unchanged."}), 200
+    return jsonify({"message": f"Score checked, best score unchanged. Score was {score}, and user's current score was {user_row[0]}"}), 200
 
 
 if __name__ == "__main__":

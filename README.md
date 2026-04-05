@@ -33,4 +33,3 @@ git switch -c branch-name → make a new branch and enter it
 git branch → see what branch you're on
 git status → see's what branch you're on and if any files need to be comitted
 
-ANY OTHER DIRECTIONS:

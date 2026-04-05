@@ -78,6 +78,33 @@ void tryUpdateScore(const std::string& username, const int& score, std::string& 
     // Your register route probably returns 201 on success
     // return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
 }
+
+int getHighScore(const std::string& username, std::string& serverMessage) {
+    Http http("http://127.0.0.1", 5000);
+
+    Http::Request request;
+    request.setMethod(sf::Http::Request::Post);
+    request.setUri("/high_score");
+    request.setField("Content-Type", "application/json");
+
+    string body = "{\"username\":\"" + username + "\"}";
+
+    request.setBody(body);
+
+    Http::Response response = http.sendRequest(request);
+
+    cout << "STATUS: " << response.getStatus() << '\n';
+    cout << "BODY: " << response.getBody() << '\n';
+
+    serverMessage = response.getBody();
+    if (response.getStatus() == sf::Http::Response::Ok) {   
+        // cout << serverMessage << endl;
+        int score = stoi(serverMessage);
+        return score;
+    }
+
+    return 0;
+}
 // ----------------------------------------------------------------------------------------------------------
 
 
@@ -282,7 +309,7 @@ int main() {
     scoreText.setFont(pressStart);                  // which font to use
     scoreText.setCharacterSize(35);                 // in pixels
     scoreText.setFillColor(lightGray);              // text color
-    scoreText.setPosition(1560.f, -1000.f);            // screen position
+    scoreText.setPosition(1560.f, -1000.f);         // screen position
 
     Text zeros;
     zeros.setFont(pressStart);                      
@@ -1028,6 +1055,33 @@ int main() {
                     else if (loginFlag) {
                         std::string serverMessage;
                         success = tryLogin(userName, password, serverMessage);
+                        maxDistance = getHighScore(userName, serverMessage);
+                        HighScore.setString(to_string(maxDistance));
+                        if (maxDistance > 10000) {
+                            // cout << "maxDistance is greater than 10000, and user pressed space." << endl;
+                            zeroString2 = "";
+                            zeross.setString(zeroString2);
+                            HighScore.setPosition(1175 + 35, 10);
+                        }
+                        else if (maxDistance > 1000) {
+                            // cout << "It's going hereeee" << endl;
+                            zeroString2 = "0";
+                            zeross.setString(zeroString2);
+                            HighScore.setPosition(1210 + 35, 10);
+                        }
+                        else if (maxDistance > 100) {
+                            // cout << "It's going here toooo" << endl;
+                            zeroString2 = "00";
+                            zeross.setString(zeroString2);
+                            HighScore.setPosition(1245 + 35, 10);
+                        }
+                        else if (maxDistance > 10) {
+                            // cout << "maxDistance is greater than 10, and user pressed space." << endl;
+                            zeroString2 = "000";
+                            zeross.setString(zeroString2);
+                            HighScore.setPosition(1280 + 35, 10);
+                        }                        
+                        
                     }
 
                     if (success) {
@@ -1051,7 +1105,7 @@ int main() {
                         zeros.setPosition(1560 - (4 * 35), 10.f);       
                         zeross.setPosition(1560 - (10 * 35), 10.f);     
                         High.setPosition(1560 - (13 * 35), 10.f);      
-                        HighScore.setPosition(1560 - (6 * 35), 10.f);  
+                        // HighScore.setPosition(1560 - (6 * 35), 10.f);  
 
 
                     } 
@@ -1349,10 +1403,11 @@ int main() {
                             HighScore.setPosition(1175 + 35, 10);
                         }
                         else if (maxDistance > 1000) {
-                            // cout << "maxDistance is greater than 1000, and user clicked on the reset button." << endl;
+                            // cout << "It's going here too" << endl;
                             zeroString2 = "0";
                             zeross.setString(zeroString2);
                             HighScore.setPosition(1210 + 35, 10);
+
                         }
                         else if (maxDistance > 100) {
                             // cout << "maxDistance is greater than 100, and user clicked on the reset button." << endl;

@@ -21,6 +21,7 @@ def health():
 # GET = “give me data”
 # POST = “here’s some data, do something with it”
 
+# SIGNING UP
 def register():
     data = request.get_json()
 
@@ -157,6 +158,42 @@ def update_score():
         conn.close()
 
     return jsonify({"message": f"Score checked, best score unchanged. Score was {score}, and user's current score was {user_row[0]}"}), 200
+
+
+
+
+
+# GETTING THE HIGH SCORE FROM THE DATABASE
+@app.route("/high_score", methods=["POST"]) 
+def high_score():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Request doesn't have anything in it"}), 400
+    
+    username = data.get("username")
+
+    if not username:
+        return jsonify({"error": "There is no username"}), 400
+    
+    conn = get_db_connection()
+
+    try:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT best_score FROM users WHERE username = ?",
+            (username,)
+        )
+        user_row = cursor.fetchone()
+
+        if user_row is None:
+            return jsonify({"error": "There is no score to compare to since the user wasn't found"}), 400
+
+    finally:
+        conn.close()
+
+    high_score = user_row[0]
+
+    return jsonify(high_score), 200
 
 
 if __name__ == "__main__":

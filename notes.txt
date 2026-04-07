@@ -1,0 +1,20 @@
+I need this:
+getGlobalBounds().width
+passwordText, usernameText
+textBox1, textBox1Outline
+
+    textBox1.setSize(Vector2f(380.f, 50.f));
+    textBox1Outline.setSize(Vector2f(400.f, 60.f));
+    textBox2.setSize(Vector2f(380.f, 50.f));
+    textBox2Outline.setSize(Vector2f(400.f, 60.f));
+
+ptBounds.left + ptBounds.width < 0 // THIS IS TO GET THE WHOLE THING, FIX THE TEXT THIS WAY
+
+
+dinoHead
+dinoBody1
+dinoBody2
+dinoBody3
+dinoBody4
+
+1638

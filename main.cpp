@@ -215,7 +215,7 @@ int main() {
     RectangleShape backTextBox;
     backTextBox.setSize(Vector2f(105.f, 30.f));
     backTextBox.setFillColor(lowGray);
-    backTextBox.setPosition(25, 20);
+    backTextBox.setPosition(-225, 20);
 
     // Text that will store whatever the user types:
     string userName = "";
@@ -263,6 +263,7 @@ int main() {
     RectangleShape pterodactylBody2;
     pterodactylBody2.setSize(Vector2f(23, 53));
     pterodactylBody2.setFillColor(green);
+    pterodactylBody2.setPosition(20000.f, 20000.f);
 
     RectangleShape pterodactylUpperWing2;
     pterodactylUpperWing2.setSize(Vector2f(18, 36));
@@ -764,7 +765,7 @@ int main() {
         timeSinceLastFrame5 += deltaTime;        
         
         if (!isDead) {
-            if (speed > -1300) {
+            if (speed > -1750) {
                 speed -= 0.002;
             } 
         }        
@@ -907,7 +908,7 @@ int main() {
         // PTERODACTYL HITBOX
         pterodactylHead.setPosition(ptShrunk.left + 5, ptShrunk.top + 40);
         pterodactylBody1.setPosition(ptShrunk.left + 35, ptShrunk.top + 60);
-        pterodactylBody2.setPosition(ptShrunk.left + 41, ptShrunk.top + 62);
+        // pterodactylBody2.setPosition(ptShrunk.left + 41, ptShrunk.top + 62);            
         // pterodactylUpperWing1.setPosition(ptShrunk.left + 38.252, ptShrunk.top + 23);
         pterodactylUpperWing2.setPosition(ptShrunk.left + 37.252, ptShrunk.top + 25);
         pterodactylUpperWing3.setPosition(ptShrunk.left + 55.252, ptShrunk.top + 40);
@@ -956,11 +957,17 @@ int main() {
                     loginText.setPosition(-616.f, -225.f);
                     signUpTextBox.setPosition(-616.f, -225.f);
 
+                    textBox1.setSize(Vector2f(380.f, 50.f));
+                    textBox1Outline.setSize(Vector2f(400.f, 60.f));
+                    textBox2.setSize(Vector2f(380.f, 50.f));
+                    textBox2Outline.setSize(Vector2f(400.f, 60.f));
                     textBox1.setPosition(600.f, 120.f);
                     textBox1Outline.setPosition(590.f, 115.f);
                     textBox2.setPosition(600.f, 195.f);
                     textBox2Outline.setPosition(590.f, 190.f);
                     backText.setPosition(25.f, 25.f);
+                    backTextBox.setPosition(25, 20);
+
                     signUpFlag = true;
                 }
 
@@ -970,11 +977,16 @@ int main() {
                     orText.setPosition(-616.f, -225.f);
                     signUpText.setPosition(-616.f, -225.f);
 
+                    textBox1.setSize(Vector2f(380.f, 50.f));
+                    textBox1Outline.setSize(Vector2f(400.f, 60.f));
+                    textBox2.setSize(Vector2f(380.f, 50.f));
+                    textBox2Outline.setSize(Vector2f(400.f, 60.f));
                     textBox1.setPosition(600.f, 120.f);
                     textBox1Outline.setPosition(590.f, 115.f);
                     textBox2.setPosition(600.f, 195.f);
-                    textBox2Outline.setPosition(590.f, 190.f);
+                    textBox2Outline.setPosition(590.f, 190.f);              
                     backText.setPosition(25.f, 25.f);
+                    backTextBox.setPosition(25, 20);
                     loginFlag = true;
                 }
 
@@ -1039,7 +1051,34 @@ int main() {
                         *currentText += static_cast<char>(unicode);
                     }
                 }
+
             }
+
+            // IF USER TYPES A REALLY LONG USERNAME OR PASSWORD
+            if (usernameText.getGlobalBounds().width + 40 > textBox1.getGlobalBounds().width) {
+                textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width + 30, 50.f));
+                textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width + 30, 60.f));
+            }
+            
+            if (passwordText.getGlobalBounds().width + 60 > textBox2.getGlobalBounds().width) {
+                textBox2.setSize(Vector2f(textBox2.getGlobalBounds().width + 20, 50.f));
+                textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width + 20, 60.f));
+            }
+
+            // RESIZING THE TEXTBOX
+            // if (usernameText.getGlobalBounds().width + 70 - textBox1.getGlobalBounds().width <= 20) {
+            //     if (textBox1.getGlobalBounds().width >= 380) {
+            //         textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width - 40, 50.f));
+            //         textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width - 40, 60.f));
+            //     }
+            // }
+            
+            // if (passwordText.getGlobalBounds().width + 70 - textBox2.getGlobalBounds().width <= 50) {
+            //     if (textBox2.getGlobalBounds().width >= 380) {
+            //         textBox2.setSize(Vector2f(textBox2.getGlobalBounds().width - 15, 50.f));
+            //         textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width - 15, 60.f));
+            //     }
+            // }
 
 
             // IF PERSON PRESSES ENTER AFTER TYPING IN SOMETHING FOR USERNAME AND PASSWORD
@@ -1054,7 +1093,33 @@ int main() {
                     }
                     else if (loginFlag) {
                         std::string serverMessage;
-                        success = tryLogin(userName, password, serverMessage);
+                        success = tryLogin(userName, password, serverMessage);                        
+                    }
+
+                    if (success) {
+                        gameStart = true; // the game will start
+                        currentUsername = userName;
+
+                        // TAKE OFF THE SIGNUP AND LOGIN
+                        signUpText.setPosition(-300.f, -300.f);
+                        loginText.setPosition(-300.f, -300.f);
+                        textBox1Outline.setPosition(-300.f, -300.f);
+                        textBox1.setPosition(-300.f, -300.f);
+                        textBox2Outline.setPosition(-300.f, -300.f);
+                        textBox2.setPosition(-300.f, -300.f);
+                        usernameText.setPosition(-300.f, -300.f);
+                        passwordText.setPosition(-300.f, -300.f);
+                        backText.setPosition(-25.f, -25.f);
+                        backTextBox.setPosition(-225.f, -225.f);
+
+                        // PUTTING ALL THE GAME UI INTO PLACE
+                        scoreText.setPosition(1560.f, 10.f);            
+                        zeros.setPosition(1560 - (4 * 35), 10.f);       
+                        zeross.setPosition(1560 - (10 * 35), 10.f);     
+                        High.setPosition(1560 - (13 * 35), 10.f);      
+                        // HighScore.setPosition(1560 - (6 * 35), 10.f);  
+
+                        std::string serverMessage;
                         maxDistance = getHighScore(userName, serverMessage);
                         HighScore.setString(to_string(maxDistance));
                         if (maxDistance > 10000) {
@@ -1081,33 +1146,6 @@ int main() {
                             zeross.setString(zeroString2);
                             HighScore.setPosition(1280 + 35, 10);
                         }                        
-                        
-                    }
-
-                    if (success) {
-                        gameStart = true; // the game will start
-                        currentUsername = userName;
-
-                        // TAKE OFF THE SIGNUP AND LOGIN
-                        signUpText.setPosition(-300.f, -300.f);
-                        loginText.setPosition(-300.f, -300.f);
-                        textBox1Outline.setPosition(-300.f, -300.f);
-                        textBox1.setPosition(-300.f, -300.f);
-                        textBox2Outline.setPosition(-300.f, -300.f);
-                        textBox2.setPosition(-300.f, -300.f);
-                        usernameText.setPosition(-300.f, -300.f);
-                        passwordText.setPosition(-300.f, -300.f);
-                        backText.setPosition(-25.f, -25.f);
-                        backTextBox.setPosition(-225.f, -225.f);
-
-                        // PUTTING ALL THE GAME UI INTO PLACE
-                        scoreText.setPosition(1560.f, 10.f);            
-                        zeros.setPosition(1560 - (4 * 35), 10.f);       
-                        zeross.setPosition(1560 - (10 * 35), 10.f);     
-                        High.setPosition(1560 - (13 * 35), 10.f);      
-                        // HighScore.setPosition(1560 - (6 * 35), 10.f);  
-
-
                     } 
                 }
             }
@@ -1246,11 +1284,6 @@ int main() {
                                 HighScore.setPosition(1280 + 35, 10);
                             }                        
                         } 
-
-                        // cout << HighScore.getPosition().x - (1 * 35) << endl;
-                        // cout << HighScore.getPosition().x - (2 * 35) << endl;
-                        // cout << HighScore.getPosition().x - (3 * 35) << endl;
-                        // cout << HighScore.getPosition().x - (4 * 35) << endl;
 
                         distance = 0;
                         speed = -600;
@@ -1452,11 +1485,17 @@ int main() {
             !dinoBody3.getGlobalBounds().intersects(pterodactylHead.getGlobalBounds()) && 
             !dinoBody4.getGlobalBounds().intersects(pterodactylHead.getGlobalBounds()) &&
             
-            !dinoHead.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL
+            !dinoHead.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL UPPER WING
             !dinoBody1.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
             !dinoBody2.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
             !dinoBody3.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) && 
             !dinoBody4.getGlobalBounds().intersects(pterodactylBody1.getGlobalBounds()) &&
+
+            !dinoHead.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL LOWER WING
+            !dinoBody1.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
+            !dinoBody2.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
+            !dinoBody3.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
+            !dinoBody4.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) &&
         
             gameStart)  { 
             
@@ -1554,6 +1593,7 @@ int main() {
             duckH = duckBounds.height;
             yOffset = groundCoord - duckH;
             dinoFrameSprite.setPosition(40.f, yOffset);
+            dinoHead.setPosition(128, 520);
             if (timeSinceLastFrame >= dinoFrameDuration) {
                 dinoDuckingFrame1 = !dinoDuckingFrame1;
                 timeSinceLastFrame = 0.0f; // Resets the timer
@@ -1587,46 +1627,28 @@ int main() {
         if (timeSinceLastFrame2 >= ptFrameDuration) {
             if (!isDead) {
                 pt.setTexture(ptFlapDown, true);
-                if (ptFlap1) {
-                    pt.setTexture(ptFlapUp, true);
-                }
-                else {
-                    pt.setTexture(ptFlapDown, true);
-                }
                 ptFlap1 = !ptFlap1;
                 timeSinceLastFrame2 = 0.0f; // Resets the timer
             }
         }
 
-        ptFrameDuration -= -speed/60000000000;
-
         if (ptFlap1) {
-            if (dinoHead.getGlobalBounds().intersects(pterodactylUpperWing2.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL
-            dinoBody1.getGlobalBounds().intersects(pterodactylUpperWing2.getGlobalBounds()) && 
-            dinoBody2.getGlobalBounds().intersects(pterodactylUpperWing2.getGlobalBounds()) && 
-            dinoBody3.getGlobalBounds().intersects(pterodactylUpperWing2.getGlobalBounds()) && 
-            dinoBody4.getGlobalBounds().intersects(pterodactylUpperWing2.getGlobalBounds()) &&
-        
-            dinoHead.getGlobalBounds().intersects(pterodactylUpperWing3.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL
-            dinoBody1.getGlobalBounds().intersects(pterodactylUpperWing3.getGlobalBounds()) && 
-            dinoBody2.getGlobalBounds().intersects(pterodactylUpperWing3.getGlobalBounds()) && 
-            dinoBody3.getGlobalBounds().intersects(pterodactylUpperWing3.getGlobalBounds()) && 
-            dinoBody4.getGlobalBounds().intersects(pterodactylUpperWing3.getGlobalBounds())) {
-
-                isDead = true;
-            }
-            else {
-                if (dinoHead.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && // IF THE DINO INTERSECTS THE PTERODACTYL
-                    dinoBody1.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
-                    dinoBody2.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
-                    dinoBody3.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds()) && 
-                    dinoBody4.getGlobalBounds().intersects(pterodactylBody2.getGlobalBounds())) {
-
-                        isDead = true;
-                }
-
-            }
+            pt.setTexture(ptFlapUp, true);
+            pterodactylBody2.setPosition(20000.f, 20000.f);
+            pterodactylUpperWing2.setPosition(ptShrunk.left + 37.252, ptShrunk.top + 25);
+            pterodactylUpperWing3.setPosition(ptShrunk.left + 55.252, ptShrunk.top + 40);
+            
         }
+        else {
+            pt.setTexture(ptFlapDown, true);
+            pterodactylBody2.setPosition(ptShrunk.left + 41, ptShrunk.top + 62); 
+            pterodactylUpperWing2.setPosition(20000.f, 20000.f);
+            pterodactylUpperWing3.setPosition(20000.f, 20000.f);
+        }
+
+        ptFrameDuration -= -speed/60000000000;
+        
+        
 
         // Checks if sprite has landed
         if (dinoFrameSprite.getPosition().y + duckH >= groundCoord) {
@@ -1881,11 +1903,14 @@ int main() {
         // IM PRETTY SURE THIS IS THE PTERODACTYL HITBOX
         // dinoScreen.draw(pterodactylHead); 
         // dinoScreen.draw(pterodactylBody1); 
-        // dinoScreen.draw(pterodactylBody2); 
+        // dinoScreen.draw(pterodactylBody2); // BOTTOM WING
         // dinoScreen.draw(pterodactylUpperWing1);
         // dinoScreen.draw(pterodactylUpperWing2);
         // dinoScreen.draw(pterodactylUpperWing3);
         
+        // dinoScreen.draw(dinoHead);         
+        // dinoScreen.draw(dinoBody1);         
+        // dinoScreen.draw(dinoBody2);         
         // dinoScreen.draw(dinoBody3);         
         // dinoScreen.draw(dinoBody4); 
 

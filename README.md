@@ -51,13 +51,18 @@ docker compose up --build -d: The -d means detached mode, so it runs in the back
 I can stop the docker with: docker compose down
 
 You can test that the docker is working with: Invoke-RestMethod http://127.0.0.1:5000/health
+Or just play the game
+
+I can run things in the same terminal now!!! No more having to create a second terminal!
 
 ACTUAL STEPS FOR THE FUTURE OF THIS PROJECT:
-1. Containerize the backend with Docker
-2. Move from SQLite to PostgreSQL
+1. Containerize the backend with Docker ✓
+2. Move from SQLite to PostgreSQL ✓
 3. Deploy it to the cloud
 4. Add Terraform for Infrastructure as Code
 5. Add CI/CD with GitHub Actions
 6. Add logging + monitoring
 7. Build a React dashboard for leaderboard + stats
 8. Use S3 for storing extra artifacts
+
+DIFFICULTIES: Docker was easy to setup! Moving from SQLite to PostgreSQL took some time since I had to change the syntax, download a BETTER Database management tool (DBeaver), and make sure I understood what was going on. Not bad though, got distracted with social media though which made things take longer.

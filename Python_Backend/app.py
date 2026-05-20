@@ -1,13 +1,23 @@
 from flask import Flask, request, jsonify
-import sqlite3
+# import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import psycopg2
+from psycopg2 import IntegrityError
 app = Flask(__name__)
 DATABASE = "dino.db"
 
+# def get_db_connection():
+#     conn = sqlite3.connect(DATABASE)
+#     return conn
+
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    return conn
+    return psycopg2.connect(
+        host="dino-postgres",
+        port=5432,
+        database="dino_game",
+        user="dino_user",
+        password="dino_password"
+    )
 
 @app.route("/health")
 def health():
@@ -41,11 +51,12 @@ def register():
 
     try:
         cursor.execute(
-            "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+            "INSERT INTO users (username, password_hash) VALUES (%s, %s)",
             (username, password_hash)
         )
         conn.commit()
-    except sqlite3.IntegrityError:
+    except IntegrityError:
+        conn.rollback()
         conn.close()
         return jsonify({"error": "Username already exists"}), 409
     
@@ -87,7 +98,7 @@ def login():
         # cursor = the thing you use to actually send SQL commands through that connection
 
         cursor.execute( # use the database cursor to run an SQL command
-            "SELECT password_hash FROM users WHERE username = ?",
+            "SELECT password_hash FROM users WHERE username = %s",
             (username,)
         )
         user_row = cursor.fetchone() # gets a row from cursor, in this case there should only be one row
@@ -138,7 +149,7 @@ def update_score():
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT best_score FROM users WHERE username = ?",
+            "SELECT best_score FROM users WHERE username = %s",
             (username,)
         )
         user_row = cursor.fetchone()
@@ -148,7 +159,7 @@ def update_score():
         
         if user_row[0] < score:
             cursor.execute(
-                "UPDATE users SET best_score = ? WHERE username = ?",
+                "UPDATE users SET best_score = %s WHERE username = %s",
                 (score, username)
             )
             conn.commit()
@@ -180,7 +191,7 @@ def high_score():
     try:
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT best_score FROM users WHERE username = ?",
+            "SELECT best_score FROM users WHERE username = %s",
             (username,)
         )
         user_row = cursor.fetchone()

@@ -6,3 +6,20 @@ services:
       - "5000:5000"
     volumes:
       - .:/app
+    depends_on:
+      - dino-postgres
+
+  dino-postgres:
+    image: postgres:16
+    container_name: dino-postgres
+    environment:
+      POSTGRES_DB: dino_game
+      POSTGRES_USER: dino_user
+      POSTGRES_PASSWORD: dino_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - dino_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  dino_postgres_data:

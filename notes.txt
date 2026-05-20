@@ -18,3 +18,133 @@ dinoBody3
 dinoBody4
 
 1638
+
+GET = retrieve data
+POST = send new data / create something / sometimes actions like login
+PUT = replace/update an entire resource
+PATCH = partially update a resource
+DELETE = remove a resource
+
+The big pattern
+1xx = informational
+2xx = success
+3xx = redirect
+4xx = client messed up the request
+5xx = server messed up
+
+For your project, the ones you’ll care about most are 200, 201, 400, 401, 404, 409, 500.
+
+1xx — informational
+
+These usually mean “request received, still working on it.”
+
+100 Continue
+101 Switching Protocols
+102 Processing
+103 Early Hints
+2xx — success
+
+These mean the request worked.
+
+200 OK
+General success
+201 Created
+Something new was created, like a new user account
+202 Accepted
+Request accepted, processing may happen later
+203 Non-Authoritative Information
+204 No Content
+Success, but nothing is returned in the body
+205 Reset Content
+206 Partial Content
+207 Multi-Status
+208 Already Reported
+226 IM Used
+3xx — redirection
+
+These mean “go somewhere else” or “use cached version.”
+
+300 Multiple Choices
+301 Moved Permanently
+302 Found
+303 See Other
+304 Not Modified
+305 Use Proxy
+306 unused / reserved
+307 Temporary Redirect
+308 Permanent Redirect
+
+For your API stuff, you probably won’t use these much right now.
+
+4xx — client error
+
+These mean the request from the client was bad in some way.
+
+400 Bad Request
+Missing fields, bad JSON, wrong format
+401 Unauthorized
+Login failed / credentials invalid
+402 Payment Required
+Rare, basically not used much
+403 Forbidden
+You’re recognized, but not allowed
+404 Not Found
+Route or resource doesn’t exist
+405 Method Not Allowed
+Like using GET on a POST-only route
+406 Not Acceptable
+407 Proxy Authentication Required
+408 Request Timeout
+409 Conflict
+Perfect for duplicate username
+410 Gone
+411 Length Required
+412 Precondition Failed
+413 Content Too Large
+414 URI Too Long
+415 Unsupported Media Type
+Like wrong content type instead of JSON
+416 Range Not Satisfiable
+417 Expectation Failed
+418 I’m a teapot
+Joke status code, but famous
+421 Misdirected Request
+422 Unprocessable Content
+Often used for validation failures
+423 Locked
+424 Failed Dependency
+425 Too Early
+426 Upgrade Required
+428 Precondition Required
+429 Too Many Requests
+Rate limiting
+431 Request Header Fields Too Large
+451 Unavailable For Legal Reasons
+5xx — server error
+
+These mean the server failed, even if the client sent a valid request.
+
+500 Internal Server Error
+Generic server-side crash/error
+501 Not Implemented
+502 Bad Gateway
+503 Service Unavailable
+504 Gateway Timeout
+505 HTTP Version Not Supported
+506 Variant Also Negotiates
+507 Insufficient Storage
+508 Loop Detected
+510 Not Extended
+511 Network Authentication Required
+The ones you should actually memorize for this project
+
+These are the real ones to lock in:
+
+200 = success
+201 = created something new
+400 = bad request from client
+401 = bad login / unauthorized
+404 = not found
+405 = wrong HTTP method
+409 = conflict, like duplicate username
+500 = server-side problem

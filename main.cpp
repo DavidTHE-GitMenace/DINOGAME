@@ -1903,7 +1903,6 @@ int main() {
         // IM PRETTY SURE THIS IS THE PTERODACTYL HITBOX
         // dinoScreen.draw(pterodactylHead); 
         // dinoScreen.draw(pterodactylBody1); 
-        // dinoScreen.draw(pterodactylBody2); // BOTTOM WING
         // dinoScreen.draw(pterodactylUpperWing1);
         // dinoScreen.draw(pterodactylUpperWing2);
         // dinoScreen.draw(pterodactylUpperWing3);

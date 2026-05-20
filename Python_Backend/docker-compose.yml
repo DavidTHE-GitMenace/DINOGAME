@@ -1,0 +1,8 @@
+services:
+  dino-api:
+    build: .
+    container_name: dino-api
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app

@@ -59,6 +59,12 @@ ACTUAL STEPS FOR THE FUTURE OF THIS PROJECT:
 1. Containerize the backend with Docker ✓
 2. Move from SQLite to PostgreSQL ✓
 3. Deploy it to the cloud
+    1. Use environment variables for DB_HOST, DB_NAME, DB_USER, DB_PASSWORD
+    2. Use Gunicorn instead of Flask’s development server
+    3. Make sure /health works
+    4. Rebuild Docker locally
+    5. Then deploy the API container to GCP Cloud Run
+    6. Then connect it to Cloud SQL PostgreSQL
 4. Add Terraform for Infrastructure as Code
 5. Add CI/CD with GitHub Actions
 6. Add logging + monitoring
@@ -66,3 +72,64 @@ ACTUAL STEPS FOR THE FUTURE OF THIS PROJECT:
 8. Use S3 for storing extra artifacts
 
 DIFFICULTIES: Docker was easy to setup! Moving from SQLite to PostgreSQL took some time since I had to change the syntax, download a BETTER Database management tool (DBeaver), and make sure I understood what was going on. Not bad though, got distracted with social media though which made things take longer.
+
+
+5/26
+
+The cloud needs something standardized to run. Docker gives it that standardized package. The cloud doesn't know how to run my project without proper instructions either. It's the same concept as running my game on another device. Docker gives the cloud the exact environment/container with the intructions to download Python, Flask, psycopg2, to copy my files like app.py and whatever else for the API and the server database to run in the background while users play the game. Plus, Docker is able to run my API, database server, and C++ Dino Game, all in one terminal so it's still a plus.
+
+JUST FOUND THAT THESE ARE TWO DIFFERENT THINGS RUNNING NOW: API and POSTGRESQL SERVER
+dino-api container        = runs your Flask API
+dino-postgres container   = runs the PostgreSQL database server
+
+SQLite:
+My app opens a database file.
+
+PostgreSQL:
+My app connects to a running database server.
+
+SQLite was having my API and database be one thing, which made it so I only had one server running. Now that I upgraded to PostgreSQL, PostgreSQL runs it's own database in another server, unlike SQLite, where the API was just interacting with a database file. My new PostgreSQL database is running in a server, and my Python Flask API is running in a server. Docker is able to make a virtual environment for both of these servers to run in one terminal (for convenience), and when this game is able to be ran on other devices and the cloud, Docker makes sure everything is downloaded and set up so the servers, and this game can run smoothly.
+
+Four types of client requests: GET, POST, PUT, and DELETE
+
+GET (Read): Retrieves data from a server. This is the most common request, used every time you load a webpage, view an image, or fetch information from a database. It only requests data and does not alter the server in any way.
+
+POST (Create): Sends new data to a server to create a resource. For example, when you submit a web form, upload a file, or create a new user account, a POST request carries that new data to be saved on the server.
+
+PUT (Update/Replace): Sends data to the server to completely update or replace an existing resource. If the resource does not already exist, the server may create it.
+
+DELETE (Remove): Requests that the server remove a specific resource or piece of data at a given location.
+
+Note: There are also supplementary methods like PATCH (used for making partial modifications to an existing resource) and OPTIONS (used to see what actions a server permits).
+
+Why not contain the C++ Dino Game with Docker? Docker is usually strongest for things like:
+APIs
+web servers
+databases
+background workers
+microservices
+
+A desktop game is different because it needs a graphics window, keyboard input, audio, GPU/display access, etc. You can technically containerize GUI apps, but for a normal Windows SFML game, that is not the cleanest way to distribute it.
+
+For your C++ game, the better “user can run this” solution is usually:
+Package the .exe + SFML .dll files + assets into one release folder/zip
+
+DinoGameRelease/
+  DinoGame.exe
+  sfml-graphics-2.dll
+  sfml-window-2.dll
+  sfml-system-2.dll
+  sfml-audio-2.dll
+  sfml-network-2.dll
+  assets/
+    fonts/
+    images/
+    audio/
+
+Then a user does not need to install SFML separately. They just run your .exe, assuming I packaged the DLLs correctly.
+
+Backend API = Dockerize it
+Database for local dev = Dockerize it
+Desktop game = Package it as a Windows release
+
+Just realized that apparently the Cloud won't just copy the data or connect to my PostgreSQL database server that I made, I have to somehow transport all of my data that I have from my PostgreSQL database to a Google/Azure Cloud PostgreSQL database. 

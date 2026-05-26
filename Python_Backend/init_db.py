@@ -1,4 +1,5 @@
 # import sqlite3 # importing a library/module so Python can use SQLite
+import os
 import psycopg2
 
 # Open or create a database file named dino.db, and let me talk to it

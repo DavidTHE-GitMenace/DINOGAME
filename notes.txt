@@ -34,6 +34,9 @@ The big pattern
 
 For your project, the ones you’ll care about most are 200, 201, 400, 401, 404, 409, 500.
 
+
+
+
 1xx — informational
 
 These usually mean “request received, still working on it.”
@@ -42,6 +45,10 @@ These usually mean “request received, still working on it.”
 101 Switching Protocols
 102 Processing
 103 Early Hints
+
+
+
+
 2xx — success
 
 These mean the request worked.
@@ -60,6 +67,10 @@ Success, but nothing is returned in the body
 207 Multi-Status
 208 Already Reported
 226 IM Used
+
+
+
+
 3xx — redirection
 
 These mean “go somewhere else” or “use cached version.”
@@ -75,6 +86,9 @@ These mean “go somewhere else” or “use cached version.”
 308 Permanent Redirect
 
 For your API stuff, you probably won’t use these much right now.
+
+
+
 
 4xx — client error
 

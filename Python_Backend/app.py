@@ -1,5 +1,5 @@
+import os
 from flask import Flask, request, jsonify
-# import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import psycopg2
 from psycopg2 import IntegrityError
@@ -12,11 +12,11 @@ DATABASE = "dino.db"
 
 def get_db_connection():
     return psycopg2.connect(
-        host="dino-postgres",
-        port=5432,
-        database="dino_game",
-        user="dino_user",
-        password="dino_password"
+        host=os.getenv("DB_HOST", "dino-postgres"),
+        port=os.getenv("DB_PORT", "5432"),
+        database=os.getenv("DB_NAME", "dino_game"),
+        user=os.getenv("DB_USER", "dino_user"),
+        password=os.getenv("DB_PASSWORD", "dino_password")    
     )
 
 @app.route("/health")

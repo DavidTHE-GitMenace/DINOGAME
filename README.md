@@ -310,3 +310,17 @@ Means:
 curl_easy_perform(curl);
 means:
 “Actually send the request now.”
+
+
+
+CHATGPT'S Cloud Upgrade Summary:
+- Dockerized Flask REST API
+- Migrated backend database from SQLite to PostgreSQL
+- Created local PostgreSQL container with Docker Compose
+- Deployed Docker image to GCP Artifact Registry
+- Hosted Flask API on Cloud Run
+- Created Cloud SQL PostgreSQL database
+- Connected Cloud Run to Cloud SQL using environment variables
+- Replaced SFML sf::Http with libcurl for HTTPS support
+- Migrated local PostgreSQL user/high-score data into Cloud SQL
+- Verified C++ game login and score updates through the cloud backend

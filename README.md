@@ -324,3 +324,17 @@ CHATGPT'S Cloud Upgrade Summary:
 - Replaced SFML sf::Http with libcurl for HTTPS support
 - Migrated local PostgreSQL user/high-score data into Cloud SQL
 - Verified C++ game login and score updates through the cloud backend
+
+I forgot what Flask was lol, here's what is incase I forget again:
+Flask - the Python tool that lets app.py receive requests like /login, /register, /update_score
+
+CONTRIBUTIONS: FINALLY got everything into the cloud and that entails:
+              - Deployed Docker image to GCP Artifact Registry
+              - Hosted Flask API on Cloud Run
+              - Created Cloud SQL PostgreSQL database
+              - Connected Cloud Run to Cloud SQL using environment variables
+              - Replaced SFML sf::Http with libcurl for HTTPS support
+              - Migrated local PostgreSQL user/high-score data into Cloud SQL
+              - AND IT FUCKING WORKS.
+
+CHALLENGES: Understanding EVERYTHING. Getting an understanding of all of this is fucking nuts. I'm so glad I wrote so much in my notes. I at least understand the general gist of everything I did for the past few days.

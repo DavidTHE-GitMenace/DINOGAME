@@ -1,109 +1,74 @@
+#include "ApiClient.hpp"
 #include <iostream>
-using namespace std;
 #include <SFML/Graphics.hpp> // This is the graphics software used for the 2D game
 #include <SFML/Audio.hpp> // Audio inclusion
 #include <SFML/Network.hpp> // So this game can connect to the API server
-using namespace sf;
 #include <random>
 #include <chrono>
 #include <cstddef>
 #include <string>
+using namespace std;
+using namespace sf;
+
+
 
 // API STUFF ------------------------------------------------------------------------------------------------
 bool tryRegister(const std::string& username, const std::string& password, std::string& serverMessage) {
-    sf::Http http("http://127.0.0.1", 5000);
+    string jsonBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-    sf::Http::Request request;
-    request.setMethod(sf::Http::Request::Post);
-    request.setUri("/register");
-    request.setField("Content-Type", "application/json");
+    ApiResponse response = postJsonToApi("/register", jsonBody);
 
-    std::string body = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+    cout << "STATUS: " << response.statusCode << endl;
+    cout << "BODY: " << response.body << endl;
 
-    request.setBody(body);
+    serverMessage = response.body;
 
-    sf::Http::Response response = http.sendRequest(request);
-
-    std::cout << "STATUS: " << response.getStatus() << '\n';
-    std::cout << "BODY: " << response.getBody() << '\n';
-
-    serverMessage = response.getBody();
-
-    // Your register route probably returns 201 on success
-    return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+    return response.statusCode == 200;
 }
+
 
 bool tryLogin(const std::string& username, const std::string& password, std::string& serverMessage) {
-    Http http("http://127.0.0.1", 5000);
+    std::string jsonBody = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
 
-    Http::Request request;
-    request.setMethod(sf::Http::Request::Post);
-    request.setUri("/login");
-    request.setField("Content-Type", "application/json");
+    ApiResponse response = postJsonToApi("/login", jsonBody);
 
-    string body = "{\"username\":\"" + username + "\",\"password\":\"" + password + "\"}";
+    std::cout << "STATUS: " << response.statusCode << std::endl;
+    std::cout << "BODY: " << response.body << std::endl;
 
-    request.setBody(body);
+    serverMessage = response.body;
 
-    Http::Response response = http.sendRequest(request);
-
-    cout << "STATUS: " << response.getStatus() << '\n';
-    cout << "BODY: " << response.getBody() << '\n';
-
-    serverMessage = response.getBody();
-
-    // Your register route probably returns 201 on success
-    return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+    return response.statusCode == 200;
 }
 
+
 void tryUpdateScore(const std::string& username, const int& score, std::string& serverMessage) {
-    Http http("http://127.0.0.1", 5000);
+    string jsonBody = "{\"username\":\"" + username + "\",\"score\":" + to_string(score) + "}";
 
-    Http::Request request;
-    request.setMethod(sf::Http::Request::Post);
-    request.setUri("/update_score");
-    request.setField("Content-Type", "application/json");
+    ApiResponse response = postJsonToApi("/update_score", jsonBody);
 
-    string body = "{\"username\":\"" + username + "\",\"score\":\"" + to_string(score) + "\"}";
+    cout << "STATUS: " << response.statusCode << endl;
+    cout << "BODY: " << response.body << endl;
 
-    request.setBody(body);
-
-    Http::Response response = http.sendRequest(request);
-
-    cout << "STATUS: " << response.getStatus() << '\n';
-    cout << "BODY: " << response.getBody() << '\n';
-
-    serverMessage = response.getBody();
-
-    // Your register route probably returns 201 on success
-    // return response.getStatus() == sf::Http::Response::Created || response.getStatus() == sf::Http::Response::Ok;
+    serverMessage = response.body;
 }
 
 int getHighScore(const std::string& username, std::string& serverMessage) {
-    Http http("http://127.0.0.1", 5000);
+    string jsonBody = "{\"username\":\"" + username + "\"}";
 
-    Http::Request request;
-    request.setMethod(sf::Http::Request::Post);
-    request.setUri("/high_score");
-    request.setField("Content-Type", "application/json");
+    ApiResponse response = postJsonToApi("/high_score", jsonBody);
 
-    string body = "{\"username\":\"" + username + "\"}";
+    cout << "STATUS: " << response.statusCode << endl;
+    cout << "BODY: " << response.body << endl;
 
-    request.setBody(body);
+    serverMessage = response.body;
 
-    Http::Response response = http.sendRequest(request);
-
-    cout << "STATUS: " << response.getStatus() << '\n';
-    cout << "BODY: " << response.getBody() << '\n';
-
-    serverMessage = response.getBody();
-    if (response.getStatus() == sf::Http::Response::Ok) {   
-        // cout << serverMessage << endl;
+    if(response.statusCode == 200) {
         int score = stoi(serverMessage);
         return score;
     }
 
     return 0;
+
 }
 // ----------------------------------------------------------------------------------------------------------
 

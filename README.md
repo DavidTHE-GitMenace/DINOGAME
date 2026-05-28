@@ -338,3 +338,11 @@ CONTRIBUTIONS: FINALLY got everything into the cloud and that entails:
               - AND IT FUCKING WORKS.
 
 CHALLENGES: Understanding EVERYTHING. Getting an understanding of all of this is fucking nuts. I'm so glad I wrote so much in my notes. I at least understand the general gist of everything I did for the past few days.
+
+
+
+
+5/28
+
+Right now, we are trying to make this game into something that people can download and play so I can actually get user data. So to make it so people play it in the most CONVIENENT way, I'm going to download Inno to wrap the CA file, all of the dll files, and assets into a executable that'll show up on a desktop just like any other app. Then we make a LinkedIn post with what I did, the game executable, and what I plan to do next. That would be some GOAT shit, and that would make this project one of the most DISGUSTING projects I've ever made. Resume icon right there.
+

@@ -1275,7 +1275,9 @@ int main() {
                         usernameText.setPosition(-300.f, -300.f);
                         passwordText.setPosition(-300.f, -300.f);
                         createAccText.setPosition(-250.f, -500.f);
-                        createAccTextBox.setPosition(-250.f, -500.f);                        
+                        createAccTextBox.setPosition(-250.f, -500.f);    
+                        logBackInText.setPosition(-2250.f, -500.f); 
+                        logBackInTextBox.setPosition(-2250.f, -500.f); 
                         backText.setPosition(-25.f, -25.f);
                         backTextBox.setPosition(-225.f, -225.f);
 

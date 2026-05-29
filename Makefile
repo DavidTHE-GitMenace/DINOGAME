@@ -1,7 +1,7 @@
 # ─── Project settings ───────────────────────────────────────────────────────────
 TARGET      := DinoGame.exe
 SRC_FILES   := main.cpp ApiClient.cpp
-LDFLAGS     := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lcurl -mwindows
+LDFLAGS     := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network -lcurl 
 
 # ─── Compiler settings ──────────────────────────────────────────────────────────
 CXX             := g++

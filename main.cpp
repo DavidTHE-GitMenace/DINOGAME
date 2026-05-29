@@ -23,7 +23,7 @@ bool tryRegister(const std::string& username, const std::string& password, std::
 
     serverMessage = response.body;
 
-    return response.statusCode == 200;
+    return response.statusCode >= 200 && response.statusCode < 300;
 }
 
 
@@ -131,6 +131,22 @@ int main() {
     string login = "LOG IN";
     loginText.setString(login);
 
+    Text userNameTextBlock;
+    userNameTextBlock.setFont(pressStart);                  // which font to use
+    userNameTextBlock.setCharacterSize(40);                 // in pixels
+    userNameTextBlock.setFillColor(lightGray);              // text color
+    userNameTextBlock.setPosition(-415.f, -230.f);            
+    string userName2 = "USERNAME:";
+    userNameTextBlock.setString(userName2);
+
+    Text loginTextBlock;
+    loginTextBlock.setFont(pressStart);                  // which font to use
+    loginTextBlock.setCharacterSize(40);                 // in pixels
+    loginTextBlock.setFillColor(lightGray);              // text color
+    loginTextBlock.setPosition(-415.f, -230.f);            
+    string password2 = "PASSWORD:";
+    loginTextBlock.setString(password2);
+
     RectangleShape logInTextBox;
     logInTextBox.setSize(Vector2f(329.f, 60.f));
     logInTextBox.setFillColor(lowGray);
@@ -181,6 +197,32 @@ int main() {
     backTextBox.setSize(Vector2f(105.f, 30.f));
     backTextBox.setFillColor(lowGray);
     backTextBox.setPosition(-225, 20);
+
+    Text createAccText;
+    createAccText.setFont(pressStart);
+    createAccText.setCharacterSize(20);
+    createAccText.setFillColor(lightGray);
+    createAccText.setPosition(-250.f, -25.f);
+    string createAcc = "<CREATE ACCOUNT>";
+    createAccText.setString(createAcc);
+
+    RectangleShape createAccTextBox;
+    createAccTextBox.setSize(Vector2f(326.f, 30.f));
+    createAccTextBox.setFillColor(lowGray);
+    createAccTextBox.setPosition(-625, -270);
+
+    Text logBackInText;
+    logBackInText.setFont(pressStart);
+    logBackInText.setCharacterSize(20);
+    logBackInText.setFillColor(lightGray);
+    logBackInText.setPosition(-250.f, -25.f);
+    string logBackIn = "<LOG INTO ACCOUNT>";
+    logBackInText.setString(logBackIn);
+
+    RectangleShape logBackInTextBox;
+    logBackInTextBox.setSize(Vector2f(369.f, 30.f));
+    logBackInTextBox.setFillColor(lowGray);
+    logBackInTextBox.setPosition(-625, -270);
 
     // Text that will store whatever the user types:
     string userName = "";
@@ -912,6 +954,20 @@ int main() {
                     backTextBox.setPosition(-616.f, -225.f);
                 }
 
+                if (createAccText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    createAccTextBox.setPosition(625.f, 264.f);
+                }
+                else {
+                    createAccTextBox.setPosition(-616.f, -225.f);
+                }
+
+                if (logBackInText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    logBackInTextBox.setPosition(605.f, 264.f);
+                }
+                else {
+                    logBackInTextBox.setPosition(-616.f, -225.f);
+                }
+
             }   
 
             // TYPING INTO TEXTBOXES
@@ -923,6 +979,8 @@ int main() {
                     signUpTextBox.setPosition(-616.f, -225.f);
 
                     textBox1.setSize(Vector2f(380.f, 50.f));
+                    userNameTextBlock.setPosition(215.f, 127.f);            
+                    loginTextBlock.setPosition(215.f, 204.f);                                
                     textBox1Outline.setSize(Vector2f(400.f, 60.f));
                     textBox2.setSize(Vector2f(380.f, 50.f));
                     textBox2Outline.setSize(Vector2f(400.f, 60.f));
@@ -930,9 +988,8 @@ int main() {
                     textBox1Outline.setPosition(590.f, 115.f);
                     textBox2.setPosition(600.f, 195.f);
                     textBox2Outline.setPosition(590.f, 190.f);
+                    createAccText.setPosition(625.f, 270.f);
                     backText.setPosition(25.f, 25.f);
-                    backTextBox.setPosition(25, 20);
-
                     signUpFlag = true;
                 }
 
@@ -949,10 +1006,159 @@ int main() {
                     textBox1.setPosition(600.f, 120.f);
                     textBox1Outline.setPosition(590.f, 115.f);
                     textBox2.setPosition(600.f, 195.f);
-                    textBox2Outline.setPosition(590.f, 190.f);              
+                    textBox2Outline.setPosition(590.f, 190.f);   
+                    userNameTextBlock.setPosition(215.f, 127.f);    
+                    loginTextBlock.setPosition(215.f, 204.f);    
+                    logBackInText.setPosition(605.f, 270.f);
                     backText.setPosition(25.f, 25.f);
-                    backTextBox.setPosition(25, 20);
                     loginFlag = true;
+                }
+
+                // IF YOU CLICK CREATE ACCOUNT DURING SIGN UP PROCESS
+                if (createAccText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    if (!userName.empty() && !password.empty()) {
+                        bool success;
+                        string currentUsername = "";
+
+                        if (signUpFlag) {
+                            std::string serverMessage;
+                            cout << "In sign-up flag!" << endl;
+                            success = tryRegister(userName, password, serverMessage);
+                        }
+                    
+
+                        if (success) {
+                            textBox1.setSize(Vector2f(-3980.f, 50.f));
+                            textBox1Outline.setSize(Vector2f(-9400.f, 60.f));
+                            textBox2.setSize(Vector2f(-9380.f, 50.f));
+                            textBox2Outline.setSize(Vector2f(-9400.f, 60.f));
+                            textBox1.setPosition(-9600.f, 120.f);
+                            textBox1Outline.setPosition(-5590.f, 115.f);
+                            textBox2.setPosition(-5600.f, 195.f);
+                            textBox2Outline.setPosition(-5590.f, 190.f);   
+                            userNameTextBlock.setPosition(-5215.f, 127.f);    
+                            loginTextBlock.setPosition(-5215.f, 204.f);    
+                            logBackInText.setPosition(-4605.f, 270.f);
+                            backText.setPosition(-825.f, 25.f);
+                            signUpText.setPosition(-595.f, 50.f);
+                            createAccText.setPosition(-595.f, 50.f);
+                            createAccTextBox.setPosition(-595.f, 50.f);
+                            usernameText.setPosition(-595.f, 50.f);
+                            passwordText.setPosition(-595.f, 50.f);
+
+                            gameStart = true; // the game will start
+                            cout << "STARTING!" << endl;
+                            currentUsername = userName;
+
+                            // PUTTING ALL THE GAME UI INTO PLACE
+                            scoreText.setPosition(1560.f, 10.f);            
+                            zeros.setPosition(1560 - (4 * 35), 10.f);       
+                            zeross.setPosition(1560 - (10 * 35), 10.f);     
+                            High.setPosition(1560 - (13 * 35), 10.f);      
+                            // HighScore.setPosition(1560 - (6 * 35), 10.f);  
+
+                            std::string serverMessage;
+                            maxDistance = getHighScore(userName, serverMessage);
+                            HighScore.setString(to_string(maxDistance));
+                            if (maxDistance > 10000) {
+                                // cout << "maxDistance is greater than 10000, and user pressed space." << endl;
+                                zeroString2 = "";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1175 + 35, 10);
+                            }
+                            else if (maxDistance > 1000) {
+                                // cout << "It's going hereeee" << endl;
+                                zeroString2 = "0";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1210 + 35, 10);
+                            }
+                            else if (maxDistance > 100) {
+                                // cout << "It's going here toooo" << endl;
+                                zeroString2 = "00";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1245 + 35, 10);
+                            }
+                            else if (maxDistance > 10) {
+                                // cout << "maxDistance is greater than 10, and user pressed space." << endl;
+                                zeroString2 = "000";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1280 + 35, 10);
+                            }                        
+                        }
+                    }    
+                }
+                
+                if (logBackInText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    if (!userName.empty() && !password.empty()) {
+                        bool success;
+                        string currentUsername = "";
+
+                        if (loginFlag) {
+                            std::string serverMessage;
+                            cout << "In login flag!" << endl;
+                            success = tryLogin(userName, password, serverMessage);
+                        }
+                    
+
+                        if (success) {
+                            textBox1.setSize(Vector2f(-3980.f, 50.f));
+                            textBox1Outline.setSize(Vector2f(-9400.f, 60.f));
+                            textBox2.setSize(Vector2f(-9380.f, 50.f));
+                            textBox2Outline.setSize(Vector2f(-9400.f, 60.f));
+                            textBox1.setPosition(-9600.f, 120.f);
+                            textBox1Outline.setPosition(-5590.f, 115.f);
+                            textBox2.setPosition(-5600.f, 195.f);
+                            textBox2Outline.setPosition(-5590.f, 190.f);   
+                            userNameTextBlock.setPosition(-5215.f, 127.f);    
+                            loginTextBlock.setPosition(-5215.f, 204.f);    
+                            logBackInText.setPosition(-4605.f, 270.f);
+                            backText.setPosition(-825.f, 25.f);
+                            loginText.setPosition(-595.f, 50.f);
+                            logBackInText.setPosition(-595.f, 50.f);
+                            logBackInTextBox.setPosition(-595.f, 50.f);
+                            usernameText.setPosition(-595.f, 50.f);
+                            passwordText.setPosition(-595.f, 50.f);
+
+                            gameStart = true; // the game will start
+                            cout << "STARTING!" << endl;
+                            currentUsername = userName;
+
+                            // PUTTING ALL THE GAME UI INTO PLACE
+                            scoreText.setPosition(1560.f, 10.f);            
+                            zeros.setPosition(1560 - (4 * 35), 10.f);       
+                            zeross.setPosition(1560 - (10 * 35), 10.f);     
+                            High.setPosition(1560 - (13 * 35), 10.f);      
+                            // HighScore.setPosition(1560 - (6 * 35), 10.f);  
+
+                            std::string serverMessage;
+                            maxDistance = getHighScore(userName, serverMessage);
+                            HighScore.setString(to_string(maxDistance));
+                            if (maxDistance > 10000) {
+                                // cout << "maxDistance is greater than 10000, and user pressed space." << endl;
+                                zeroString2 = "";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1175 + 35, 10);
+                            }
+                            else if (maxDistance > 1000) {
+                                // cout << "It's going hereeee" << endl;
+                                zeroString2 = "0";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1210 + 35, 10);
+                            }
+                            else if (maxDistance > 100) {
+                                // cout << "It's going here toooo" << endl;
+                                zeroString2 = "00";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1245 + 35, 10);
+                            }
+                            else if (maxDistance > 10) {
+                                // cout << "maxDistance is greater than 10, and user pressed space." << endl;
+                                zeroString2 = "000";
+                                zeross.setString(zeroString2);
+                                HighScore.setPosition(1280 + 35, 10);
+                            }                        
+                        }
+                    }    
                 }
 
                 if (backText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
@@ -963,8 +1169,12 @@ int main() {
                     signUpText.setPosition(595.f, 50.f);            
                     orText.setPosition(730.f, 150.f);            
                     loginText.setPosition(615.f, 230.f);    
+                    createAccText.setPosition(-625.f, -270.f);
+                    logBackInText.setPosition(-625.f, -270.f);
                     backText.setPosition(-25.f, -25.f);
                     backTextBox.setPosition(-225.f, -225.f);
+                    userNameTextBlock.setPosition(-2015.f, -127.f);         
+                    loginTextBlock.setPosition(-2215.f, 204.f);                                
                     userName = password = "";
 
                     loginFlag = signUpFlag = false;
@@ -1030,21 +1240,6 @@ int main() {
                 textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width + 20, 60.f));
             }
 
-            // RESIZING THE TEXTBOX
-            // if (usernameText.getGlobalBounds().width + 70 - textBox1.getGlobalBounds().width <= 20) {
-            //     if (textBox1.getGlobalBounds().width >= 380) {
-            //         textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width - 40, 50.f));
-            //         textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width - 40, 60.f));
-            //     }
-            // }
-            
-            // if (passwordText.getGlobalBounds().width + 70 - textBox2.getGlobalBounds().width <= 50) {
-            //     if (textBox2.getGlobalBounds().width >= 380) {
-            //         textBox2.setSize(Vector2f(textBox2.getGlobalBounds().width - 15, 50.f));
-            //         textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width - 15, 60.f));
-            //     }
-            // }
-
 
             // IF PERSON PRESSES ENTER AFTER TYPING IN SOMETHING FOR USERNAME AND PASSWORD
             if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
@@ -1054,15 +1249,18 @@ int main() {
 
                     if (signUpFlag) {
                         std::string serverMessage;
+                        cout << "In sign-up flag!" << endl;
                         success = tryRegister(userName, password, serverMessage);
                     }
                     else if (loginFlag) {
                         std::string serverMessage;
+                        cout << "In login flag!" << endl;
                         success = tryLogin(userName, password, serverMessage);                        
                     }
 
                     if (success) {
                         gameStart = true; // the game will start
+                        cout << "STARTING!" << endl;
                         currentUsername = userName;
 
                         // TAKE OFF THE SIGNUP AND LOGIN
@@ -1072,8 +1270,12 @@ int main() {
                         textBox1.setPosition(-300.f, -300.f);
                         textBox2Outline.setPosition(-300.f, -300.f);
                         textBox2.setPosition(-300.f, -300.f);
+                        userNameTextBlock.setPosition(-300.f, -300.f);
+                        loginTextBlock.setPosition(-300.f, -300.f);
                         usernameText.setPosition(-300.f, -300.f);
                         passwordText.setPosition(-300.f, -300.f);
+                        createAccText.setPosition(-250.f, -500.f);
+                        createAccTextBox.setPosition(-250.f, -500.f);                        
                         backText.setPosition(-25.f, -25.f);
                         backTextBox.setPosition(-225.f, -225.f);
 
@@ -1859,7 +2061,14 @@ int main() {
         dinoScreen.draw(textBox1);
         dinoScreen.draw(textBox2Outline);
         dinoScreen.draw(textBox2);
+        dinoScreen.draw(createAccTextBox);
+        dinoScreen.draw(createAccText);
+        dinoScreen.draw(logBackInTextBox);
+        dinoScreen.draw(logBackInText);
         dinoScreen.draw(backTextBox);
+        dinoScreen.draw(userNameTextBlock);
+        dinoScreen.draw(loginTextBlock);
+        
         dinoScreen.draw(backText);
         
         dinoScreen.draw(usernameText);

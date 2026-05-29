@@ -346,3 +346,46 @@ CHALLENGES: Understanding EVERYTHING. Getting an understanding of all of this is
 
 Right now, we are trying to make this game into something that people can download and play so I can actually get user data. So to make it so people play it in the most CONVIENENT way, I'm going to download Inno to wrap the CA file, all of the dll files, and assets into a executable that'll show up on a desktop just like any other app. Then we make a LinkedIn post with what I did, the game executable, and what I plan to do next. That would be some GOAT shit, and that would make this project one of the most DISGUSTING projects I've ever made. Resume icon right there.
 
+The way you have this as an actual app, is to first get the executable and everything needed like that assets, dlls, and anything else that the executable needs to run the game/app properly. Nothing else by the way, just those things. Put all of it in a folder. Run a script in Inno Setup and you'll get the executable file, and you run it. It's not too bad.
+
+I got the scipt for Inno Setup just in case I lose it somehow:
+#define MyAppName "David's Dino Game"
+#define MyAppVersion "1.0"
+#define MyAppPublisher "David Baloyi"
+#define MyAppExeName "DinoGame.exe"
+
+[Setup]
+AppId={{DINO-GAME-CLOUD-PLAYTEST-2026}
+AppName={#MyAppName}
+AppVersion={#MyAppVersion}
+AppPublisher={#MyAppPublisher}
+DefaultDirName={autopf}\Dino Game
+DefaultGroupName={#MyAppName}
+DisableProgramGroupPage=yes
+SetupIconFile=C:\Users\dvdjr\OneDrive\Desktop\DinoGame Installer Source\DinoIcon.ico
+OutputDir=C:\Users\dvdjr\OneDrive\Documents\PersonalProjects\Dino Game Contents\DinoInstallerOutput
+OutputBaseFilename=DinoGameSetup
+Compression=lzma
+SolidCompression=yes
+WizardStyle=modern
+PrivilegesRequired=lowest
+
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+
+[Tasks]
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"; Flags: checkedonce
+
+[Files]
+Source: "C:\Users\dvdjr\OneDrive\Desktop\DinoGame Installer Source\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+
+[Icons]
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\DinoIcon.ico"
+Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{app}\DinoIcon.ico"; Tasks: desktopicon
+
+[Run]
+Filename: "{app}\{#MyAppExeName}"; Description: "Launch Dino Game"; Flags: nowait postinstall skipifsilent
+
+REALIZATION: I realize when I have an idea in mind, and someone/something suggests that I can't actually fufill that way of doing something and recommends something else, I disengage so hard. I then have to come in terms with the new idea and abandon my old idea which may take a bit depending on what it is. How do you come to terms with an idea that wasn't what you intially wanted to do, and you had another idea that felt right to you? And it didn't just feel right, but it felt like it may be possible to do if thought out more. Like both options are possible, but you want to do your option for various reasons. And why I mentioned this was because I wanted the executable to be just a quick click off my post, but people have to go a website, THEN download it. Wasn't messing with that.  
+
+Something I must remember when turning any C++ program into an actual app, -mwindows needs to be added so the terminal is gone. But when I need to go back to my code -mwindows needs to go.

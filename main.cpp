@@ -269,6 +269,13 @@ int main() {
     logBackInTextBox.setFillColor(lowGray);
     logBackInTextBox.setPosition(-625, -270);
 
+    Text errorText;
+    errorText.setFont(pressStart);
+    errorText.setCharacterSize(20);
+    errorText.setFillColor(lightGray);
+    errorText.setPosition(-250.f, -25.f);
+    errorText.setString("");
+
     Text tipText;
     tipText.setFont(pressStart);
     tipText.setCharacterSize(20);
@@ -1162,6 +1169,7 @@ int main() {
                             loginTextBlock.setPosition(-5215.f, 204.f);    
                             logBackInText.setPosition(-4605.f, 270.f);
                             backText.setPosition(-825.f, 25.f);
+                            errorText.setPosition(-4605.f, 270.f);
                             signUpText.setPosition(-595.f, 50.f);
                             createAccText.setPosition(-595.f, 50.f);
                             createAccTextBox.setPosition(-595.f, 50.f);
@@ -1207,7 +1215,16 @@ int main() {
                                 HighScore.setPosition(1280 + 35, 10);
                             }                        
                         }
-                    }    
+                        else {
+                            errorText.setString("USERNAME ALREADY USED!");
+                            errorText.setPosition(567.f, 350.f);
+                        }
+                    }  
+                    else {
+                        cout << "INSIDE OF CLICK DURING SIGNUP IF STATEMENT AND EMPTY BOXES" << endl;
+                        errorText.setString("USERNAME AND PASSWORD ARE REQUIRED.");
+                        errorText.setPosition(450.f, 350.f);
+                    }  
                 }
                 
                 if (logBackInText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
@@ -1234,6 +1251,7 @@ int main() {
                             userNameTextBlock.setPosition(-5215.f, 127.f);    
                             loginTextBlock.setPosition(-5215.f, 204.f);    
                             logBackInText.setPosition(-4605.f, 270.f);
+                            errorText.setPosition(-4605.f, 270.f);
                             backText.setPosition(-825.f, 25.f);
                             loginText.setPosition(-595.f, 50.f);
                             logBackInText.setPosition(-595.f, 50.f);
@@ -1280,7 +1298,15 @@ int main() {
                                 HighScore.setPosition(1280 + 35, 10);
                             }                        
                         }
-                    }    
+                        else {
+                            errorText.setString("INVALID USERNAME OR PASSWORD.");
+                            errorText.setPosition(513.f, 350.f);
+                        }
+                    } 
+                    else {
+                        errorText.setString("USERNAME AND PASSWORD ARE REQUIRED.");
+                        errorText.setPosition(450.f, 350.f);
+                    }   
                 }
 
                 if (backText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
@@ -1288,6 +1314,7 @@ int main() {
                     textBox1Outline.setPosition(-590.f, -115.f);
                     textBox2.setPosition(-600.f, -195.f);
                     textBox2Outline.setPosition(-590.f, -190.f);
+                    errorText.setPosition(-450.f, -350.f);
                     upKey.setPosition(-400.f, -200.f);
                     downKey.setPosition(-400.f, -400.f);
                     spaceKey.setPosition(-400.f, -400.f);
@@ -1455,7 +1482,8 @@ int main() {
                         createAccText.setPosition(-250.f, -500.f);
                         createAccTextBox.setPosition(-250.f, -500.f);    
                         logBackInText.setPosition(-2250.f, -500.f); 
-                        logBackInTextBox.setPosition(-2250.f, -500.f); 
+                        logBackInTextBox.setPosition(-2250.f, -500.f);
+                        errorText.setPosition(-4605.f, 270.f);
                         backText.setPosition(-25.f, -25.f);
                         backTextBox.setPosition(-225.f, -225.f);
 
@@ -1494,6 +1522,21 @@ int main() {
                             HighScore.setPosition(1280 + 35, 10);
                         }                        
                     } 
+                    else {
+                        if (loginFlag) {
+                            errorText.setString("INVALID USERNAME OR PASSWORD.");
+                            errorText.setPosition(513.f, 350.f);
+                        }
+                        else if (signUpFlag) {
+                            errorText.setString("USERNAME ALREADY USED!");
+                            errorText.setPosition(567.f, 350.f);
+                        }
+                    }
+                }
+                else {
+                    cout << "INSIDE OF ENTER DURING SIGNUP IF STATEMENT W/ EMPTY BOXES" << endl;
+                    errorText.setString("USERNAME AND PASSWORD ARE REQUIRED.");
+                    errorText.setPosition(450.f, 350.f);
                 }
             }
             // SIGN UP AND LOGIN END CODE -------------------------------------------------------------------
@@ -2272,6 +2315,7 @@ int main() {
         dinoScreen.draw(createAccText);
         dinoScreen.draw(logBackInTextBox);
         dinoScreen.draw(logBackInText);
+        dinoScreen.draw(errorText);
         dinoScreen.draw(backTextBox);
         dinoScreen.draw(userNameTextBlock);
         dinoScreen.draw(loginTextBlock);

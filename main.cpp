@@ -185,6 +185,51 @@ int main() {
     textBox2Outline.setFillColor(midGray);
     textBox2Outline.setPosition(-590.f, -190.f);
 
+    Text controlsText;
+    controlsText.setFont(pressStart);
+    controlsText.setCharacterSize(20);
+    controlsText.setFillColor(lightGray);
+    controlsText.setPosition(1410.f, 25.f);
+    string controls = "CONTROLS";
+    controlsText.setString(controls);
+
+    RectangleShape controlsTextBox;
+    controlsTextBox.setSize(Vector2f(170.f, 30.f));
+    controlsTextBox.setFillColor(lowGray);
+    controlsTextBox.setPosition(1407, 20);
+
+    Text jumpText;
+    jumpText.setFont(pressStart);
+    jumpText.setCharacterSize(25);
+    jumpText.setFillColor(lightGray);
+    jumpText.setPosition(-550.f, -170.f);
+    string jumpTextBlock = "- BUTTON FOR JUMPING";
+    jumpText.setString(jumpTextBlock);
+
+    Text jumpText2;
+    jumpText2.setFont(pressStart);
+    jumpText2.setCharacterSize(25);
+    jumpText2.setFillColor(lightGray);
+    jumpText2.setPosition(-590.f, -470.f);
+    string jumpTextBlock2 = "- ANOTHER BUTTON FOR JUMPING";
+    jumpText2.setString(jumpTextBlock2);
+
+    Text duckText;
+    duckText.setFont(pressStart);
+    duckText.setCharacterSize(15);
+    duckText.setFillColor(lightGray);
+    duckText.setPosition(-550.f, -300.f);
+    string duckTextBlock = "- BUTTON FOR DUCKING UNDER PTERODACTYLS";
+    duckText.setString(duckTextBlock);
+
+    Text duckText2;
+    duckText2.setFont(pressStart);
+    duckText2.setCharacterSize(15);
+    duckText2.setFillColor(lightGray);
+    duckText2.setPosition(-550.f, -330.f);
+    string duckTextBlock2 = "- FALL FASTER TO THE GROUND BY HOLDING DOWN IN THE AIR";
+    duckText2.setString(duckTextBlock2);
+
     Text backText;
     backText.setFont(pressStart);
     backText.setCharacterSize(20);
@@ -223,6 +268,20 @@ int main() {
     logBackInTextBox.setSize(Vector2f(369.f, 30.f));
     logBackInTextBox.setFillColor(lowGray);
     logBackInTextBox.setPosition(-625, -270);
+
+    Text tipText;
+    tipText.setFont(pressStart);
+    tipText.setCharacterSize(20);
+    tipText.setFillColor(lightGray);
+    tipText.setPosition(-215.f, -300.f);
+    string tipText1 = "TIP: YOU CAN FALL FASTER WHILE IN THE AIR IF YOU HOLD DOWN";
+    string tipText2 = "TIP: YOU CAN DUCK UNDER THE PTDERODACTYLS";
+    string tipText3 = "TIP: SPACE IS ALSO TO JUMP IF YOU DISLIKE THE UP ARROW";
+    string tipText4 = "";    
+    string tipText5 = "";    
+    string tipText6 = "";    
+    string tipText7 = "";    
+    // tipText.setString(tipText1);
 
     // Text that will store whatever the user types:
     string userName = "";
@@ -376,6 +435,8 @@ int main() {
     bool isScoreGone = false;
     bool every100Meters = false;
     bool gameStart = false;
+    bool usernameChanged = false;
+    bool passwordChanged = false;
     float speed = -600.0f;
 
     // JUMP MECHANICS END HERE: -----------------------------------------------------------------------------------------------
@@ -410,6 +471,8 @@ int main() {
     int ptDistance = ptDistanceRandomizer(mt);
     uniform_int_distribution<int> spacingRandomizer(100, 500);
     int spacing = spacingRandomizer(mt);
+    uniform_int_distribution<int> tipRandomizer(0, 6);
+    int tip = tipRandomizer(mt);
     uniform_int_distribution<int> dayOrNightRandomizer(1, 2);
     int dayOrNight = dayOrNightRandomizer(mt);
     int distance = 0;
@@ -610,9 +673,11 @@ int main() {
         return -1;
     }
 
-    // Here's the list off all the cacti textures
+    // Here's the list of all the cacti textures
     vector<Texture> cactiTextures = {singleCactusTexture, singleSmallCactusTexture, twoCactiTexture, twoSmallCactiTexture, threeSmallCactiTexture, fourCactiTexture};
 
+    // Here's the list of tips
+    vector<string> tipsList = {tipText1, tipText2, tipText3, tipText4, tipText5, tipText6, tipText7};
 
     // Creating the two cacti Sprites
     Sprite cactusSprite1;
@@ -737,9 +802,41 @@ int main() {
     
     // GROUND SPRITES END HERE: -----------------------------------------------------------------------------------------------
 
-    // HIT BOXES OF SPRITES: --------------------------------------------------------------------------------------------------
+    // CONTROL SPRITES: --------------------------------------------------------------------------------------------------
+    Texture upKeyTexture;
+    if (!upKeyTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/arrow-key-up.png")) {
+        cerr << "Error: The image of the upKey wasn't found for some reason." << endl;
+        return -1;
+    }
+
+    Sprite upKey;
+    upKey.setTexture(upKeyTexture, true);
+    upKey.setPosition(-400.f, -400.f);
+    upKey.setScale(0.3f, 0.3f);
 
 
+    Texture downKeyTexture;
+    if (!downKeyTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/arrow-key-down.png")) {
+        cerr << "Error: The image of the downKey wasn't found for some reason." << endl;
+        return -1;
+    }
+
+    Sprite downKey;
+    downKey.setTexture(downKeyTexture, true);
+    downKey.setPosition(-400.f, -400.f);
+    downKey.setScale(0.3f, 0.3f);
+
+
+    Texture spaceKeyTexture;
+    if (!spaceKeyTexture.loadFromFile("ImageAndSpriteFolder/OtherImagesFolder/space-keyboard.png")) {
+        cerr << "Error: The image of the spaceKey wasn't found for some reason." << endl;
+        return -1;
+    }
+
+    Sprite spaceKey;
+    spaceKey.setTexture(spaceKeyTexture, true);
+    spaceKey.setPosition(-400.f, -400.f);
+    spaceKey.setScale(0.4f, 0.4f);
     // ------------------------------------------------------------------------------------------------------------------------
 
 
@@ -954,6 +1051,13 @@ int main() {
                     backTextBox.setPosition(-616.f, -225.f);
                 }
 
+                if (controlsText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
+                    controlsTextBox.setPosition(1406, 20);
+                }
+                else {
+                    controlsTextBox.setPosition(-1406, -20);
+                }
+
                 if (createAccText.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y))) {
                     createAccTextBox.setPosition(625.f, 264.f);
                 }
@@ -977,6 +1081,7 @@ int main() {
                     orText.setPosition(-616.f, -225.f);
                     loginText.setPosition(-616.f, -225.f);
                     signUpTextBox.setPosition(-616.f, -225.f);
+                    controlsText.setPosition(-616.f, -225.f);                    
 
                     textBox1.setSize(Vector2f(380.f, 50.f));
                     userNameTextBlock.setPosition(215.f, 127.f);            
@@ -998,6 +1103,7 @@ int main() {
                     logInTextBox.setPosition(-616.f, -225.f);
                     orText.setPosition(-616.f, -225.f);
                     signUpText.setPosition(-616.f, -225.f);
+                    controlsText.setPosition(-616.f, -225.f);                    
 
                     textBox1.setSize(Vector2f(380.f, 50.f));
                     textBox1Outline.setSize(Vector2f(400.f, 60.f));
@@ -1012,6 +1118,22 @@ int main() {
                     logBackInText.setPosition(605.f, 270.f);
                     backText.setPosition(25.f, 25.f);
                     loginFlag = true;
+                }
+
+                // IF YOU CLICK THE CONTROLS BUTTON
+                if (controlsText.getGlobalBounds().contains(static_cast<float>(event.mouseButton.x), static_cast<float>(event.mouseButton.y))) {
+                    signUpText.setPosition(-605.f, -270.f);
+                    orText.setPosition(-605.f, -270.f);
+                    loginText.setPosition(-605.f, -270.f);
+                    backText.setPosition(25.f, 25.f);
+                    upKey.setPosition(400.f, 100.f);
+                    downKey.setPosition(400.f, 250.f);
+                    spaceKey.setPosition(380.f, 380.f);    
+
+                    jumpText.setPosition(550.f, 170.f);
+                    jumpText2.setPosition(590.f, 470.f);
+                    duckText.setPosition(550.f, 300.f);
+                    duckText2.setPosition(550.f, 330.f);
                 }
 
                 // IF YOU CLICK CREATE ACCOUNT DURING SIGN UP PROCESS
@@ -1166,9 +1288,17 @@ int main() {
                     textBox1Outline.setPosition(-590.f, -115.f);
                     textBox2.setPosition(-600.f, -195.f);
                     textBox2Outline.setPosition(-590.f, -190.f);
+                    upKey.setPosition(-400.f, -200.f);
+                    downKey.setPosition(-400.f, -400.f);
+                    spaceKey.setPosition(-400.f, -400.f);
+                    jumpText.setPosition(-400.f, -400.f);
+                    jumpText2.setPosition(-400.f, -400.f);
+                    duckText.setPosition(-400.f, -400.f);
+                    duckText2.setPosition(-400.f, -400.f);                    
                     signUpText.setPosition(595.f, 50.f);            
                     orText.setPosition(730.f, 150.f);            
                     loginText.setPosition(615.f, 230.f);    
+                    controlsText.setPosition(1410.f, 25.f);     
                     createAccText.setPosition(-625.f, -270.f);
                     logBackInText.setPosition(-625.f, -270.f);
                     backText.setPosition(-25.f, -25.f);
@@ -1206,8 +1336,8 @@ int main() {
                 textBox2.setFillColor(Color::White);
             }
 
-            if (event.type == sf::Event::TextEntered) {
-                std::string* currentText = nullptr;
+            if (event.type == sf::Event::TextEntered) { // TYPING USERNAME/PASSWORD IN THE TEXT BOX
+                string* currentText = nullptr;
 
                 if (activeBox == 1) {
                     currentText = &userName;
@@ -1221,24 +1351,72 @@ int main() {
                 if (currentText != nullptr) {
                     if (unicode == 8 && !currentText->empty()) {
                         currentText->pop_back();
+                        if (activeBox == 1) {
+                            usernameChanged = true;
+                        }
+                        else {
+                            passwordChanged = true;
+                        }
                     }
                     else if (unicode >= 32 && unicode <= 126) {
                         *currentText += static_cast<char>(unicode);
+                        if (activeBox == 1) {
+                            usernameChanged = true;
+                        }
+                        else {
+                            passwordChanged = true;
+                        }
                     }
                 }
 
             }
 
             // IF USER TYPES A REALLY LONG USERNAME OR PASSWORD
-            if (usernameText.getGlobalBounds().width + 40 > textBox1.getGlobalBounds().width) {
-                textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width + 30, 50.f));
-                textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width + 30, 60.f));
-            }
+            // if (usernameText.getGlobalBounds().width + 50 > textBox1.getGlobalBounds().width) { // If the text is potentially going past the textbox
+            //     textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width + 20, 50.f));
+            //     textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width + 20, 60.f));
+            // }
+            // else if (usernameText.getGlobalBounds().width < textBox1.getGlobalBounds().width + 20) { // If the textbox is potentially getting too big
+            //     if (textBox1.getGlobalBounds().width < 390) {
+            //         textBox1.setSize(Vector2f(380.f, 50.f));
+            //     }
+            //     else {
+            //         textBox1.setSize(Vector2f(textBox1.getGlobalBounds().width - 20, 50.f));
+            //         textBox1Outline.setSize(Vector2f(textBox1Outline.getGlobalBounds().width - 20, 60.f));
+            //     }
+            // }
             
-            if (passwordText.getGlobalBounds().width + 60 > textBox2.getGlobalBounds().width) {
-                textBox2.setSize(Vector2f(textBox2.getGlobalBounds().width + 20, 50.f));
-                textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width + 20, 60.f));
+            // if (passwordText.getGlobalBounds().width + 40 > textBox2.getGlobalBounds().width) { // If the text is potentially going past the textbox
+            //     textBox2.setSize(Vector2f(textBox2.getGlobalBounds().width + 20, 50.f));
+            //     textBox2Outline.setSize(Vector2f(textBox2Outline.getGlobalBounds().width + 20, 60.f));
+            // }
+
+            if (usernameChanged) {
+                float minBoxWidth = 380.f;
+                float textPadding = 50.f;
+
+                float textWidth = usernameText.getGlobalBounds().width;
+                float targetWidth = std::max(minBoxWidth, textWidth + textPadding);
+
+                textBox1.setSize(Vector2f(targetWidth, 50.f));
+                textBox1Outline.setSize(Vector2f(targetWidth + 20.f, 60.f));
+
+                usernameChanged = false;
             }
+
+            if (passwordChanged) {
+                float minBoxWidth = 380.f;
+                float textPadding = 50.f;
+
+                float textWidth = passwordText.getGlobalBounds().width;
+                float targetWidth = std::max(minBoxWidth, textWidth + textPadding);
+
+                textBox2.setSize(Vector2f(targetWidth, 50.f));
+                textBox2Outline.setSize(Vector2f(targetWidth + 20.f, 60.f));
+
+                passwordChanged = false;
+            }
+
 
 
             // IF PERSON PRESSES ENTER AFTER TYPING IN SOMETHING FOR USERNAME AND PASSWORD
@@ -1407,6 +1585,7 @@ int main() {
                         isDead = false;
                         every100Meters = false;
                         gameOver.setPosition(800, -200);
+                        tipText.setPosition(-215.f, -300.f);
                         resetButton.setPosition(800, -200);
                         zeros.setPosition(zeros.getPosition().x, 10);
                         scoreText.setPosition(scoreText.getPosition().x, 10);
@@ -1583,6 +1762,7 @@ int main() {
                     isDead = false;
                     every100Meters = false;
                     gameOver.setPosition(800, -200);
+                    tipText.setPosition(-215.f, -300.f);
                     resetButton.setPosition(800, -200);
                     zeros.setPosition(zeros.getPosition().x, 10);
                     scoreText.setPosition(scoreText.getPosition().x, 10);
@@ -1673,6 +1853,7 @@ int main() {
             isDead = false;
             gameOver.setPosition(800, -200);
             resetButton.setPosition(800, -200);
+            tipText.setPosition(-215.f, -300.f);
             cactusSprite1.move(speed * deltaTime, 0); // dino will keep moving
             cactusSprite2.move(speed * deltaTime, 0);
 
@@ -1728,8 +1909,31 @@ int main() {
             if (gameStart) {
                 gameOver.setPosition(500, 250);
                 resetButton.setPosition(730, 300);
+
                 if (!isDeadSFXPlayed) {
                     death.play();
+                    cout << "RUNNING RANOMIZER:" << endl;
+                    tip = tipRandomizer(mt);
+                    tipText.setString(tipsList[tip]);
+                    cout << "TIP RANDOMIZER NUMBER: " << tip << endl;
+                    cout << "TIP TEXT: " << tipsList[tip] << endl;
+
+                    switch (tip) {
+                        case 0:
+                            cout << "WE'RE IN CASE ZERO" << endl;
+                            tipText.setPosition(215.f, 700.f);
+                            break;
+                        case 1:
+                            cout << "WE'RE IN CASE ONE" << endl;
+                            tipText.setPosition(370.f, 700.f);
+                            break;
+                        case 2:
+                            cout << "WE'RE IN CASE TWO" << endl;
+                            tipText.setPosition(271.f, 700.f);
+                            break;
+
+                    }
+                    
                     isDeadSFXPlayed = true;
                     std::string serverMessage;
                     tryUpdateScore(userName, distance, serverMessage);
@@ -2047,6 +2251,7 @@ int main() {
         dinoScreen.draw(cactusSprite2);
         dinoScreen.draw(pt);
         dinoScreen.draw(gameOver);
+        dinoScreen.draw(tipText);
         dinoScreen.draw(resetButton);
         dinoScreen.draw(scoreText);
         dinoScreen.draw(zeros);
@@ -2072,6 +2277,15 @@ int main() {
         dinoScreen.draw(loginTextBlock);
         
         dinoScreen.draw(backText);
+        dinoScreen.draw(controlsTextBox);
+        dinoScreen.draw(controlsText);
+        dinoScreen.draw(upKey);
+        dinoScreen.draw(jumpText);        
+        dinoScreen.draw(jumpText2);                
+        dinoScreen.draw(duckText);
+        dinoScreen.draw(duckText2);        
+        dinoScreen.draw(downKey);
+        dinoScreen.draw(spaceKey);        
         
         dinoScreen.draw(usernameText);
         dinoScreen.draw(passwordText);
